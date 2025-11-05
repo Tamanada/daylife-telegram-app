@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>DAYLIFE – Reflections</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    :root {
+      --bg-gradient: linear-gradient(135deg,#eff6ff,#f5e9ff,#ffe4f3);
+      --card-bg:#ffffff;
+      --card-border:#e2e8f0;
+      --text-main:#0f172a;
+      --text-muted:#64748b;
+      --primary:#9333ea;
+      --primary-2:#ec4899;
+      --shadow-soft:0 24px 60px rgba(15,23,42,.1);
+      --radius-card:24px;
+    }
+
+    *{box-sizing:border-box;}
+    body {
+      margin:0;
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:var(--bg-gradient);
+      color:var(--text-main);
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      padding:20px;
+      opacity:0;
+      transition:opacity .4s ease-in-out;
+    }
+    body.loaded { opacity:1; }
+
+    h1 {
+      font-size:32px;
+      font-weight:700;
+      text-align:center;
+      margin-bottom:10px;
+    }
+
+    p {
+      color:var(--text-muted);
+      text-align:center;
+      margin-bottom:20px;
+    }
+
+    .card {
+      background:var(--card-bg);
+      border:1px solid var(--card-border);
+      border-radius:var(--radius-card);
+      box-shadow:var(--shadow-soft);
+      padding:24px;
+      max-width:600px;
+      width:100%;
+      margin-bottom:20px;
+    }
+
+    .button {
+      display:inline-block;
+      background:linear-gradient(90deg,var(--primary),var(--primary-2));
+      color:#fff;
+      padding:10px 20px;
+      border:none;
+      border-radius:999px;
+      cursor:pointer;
+      font-weight:600;
+      transition:filter .2s,transform .1s;
+    }
+    .button:hover { filter:brightness(1.05); transform:translateY(-1px); }
+
+    .reflection-list { width:100%; max-width:600px; }
+    .reflection-item {
+      background:#fff;
+      border:1px solid var(--card-border);
+      border-radius:16px;
+      box-shadow:var(--shadow-soft);
+      padding:16px;
+      margin-bottom:12px;
+    }
+    .reflection-title {
+      font-weight:600;
+      margin-bottom:6px;
+    }
+    .reflection-date {
+      font-size:12px;
+      color:var(--text-muted);
+      margin-bottom:8px;
+    }
+
+    .reflection-actions button {
+      margin-right:8px;
+      font-size:12px;
+      padding:6px 12px;
+      border-radius:8px;
+      border:none;
+      cursor:pointer;
+      background:#e2e8f0;
+    }
+    .reflection-actions button.delete { background:#fecaca; }
+
+    form {
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      margin-top:10px;
+    }
+
+    input, textarea {
+      padding:8px;
+      border-radius:8px;
+      border:1px solid #cbd5f5;
+      font-size:14px;
+    }
+
+    footer { margin-top:30px; font-size:12px; color:var(--text-muted); text-align:center; }
+  </style>
+</head>
+
+<body>
+  <div class="card">
+    <h1 id="headline">Daily Reflections</h1>
+    <p id="subtitle">A space to learn, grow, and be grateful.</p>
+
+    <div class="card" style="text-align:center;">
+      <div style="font-size:28px;font-weight:700;color:var(--primary);" id="totalReflections">0</div>
+      <div id="totalLabel">Total Reflections</div>
+      <p style="font-size:14px;color:var(--text-muted);" id="reflectionQuote">
+        Each reflection brings you closer to self-understanding.
+      </p>
+    </div>
+
+    <button class="button" id="addReflectionBtn">+ Add Reflection</button>
+
+    <form id="reflectionForm" style="display:none;">
+      <input type="text" id="reflectionTitle" placeholder="Title" required />
+      <textarea id="reflectionText" placeholder="Write your reflection..." rows="3" required></textarea>
+      <button type="submit" class="button">Save</button>
+    </form>
+  </div>
+
+  <div class="reflection-list" id="reflectionList"></div>
+
+  <footer id="footerText">© DAYLIFE 2025 — Every day counts</footer>
+
+  <script src="assets/langs.js"></script>
+  <script>
+    const lang = (JSON.parse(localStorage.getItem("daylifeProfile")||"{}").lang)||"en";
+    const t = LANGS[lang] || LANGS.en;
+
+    // Traductions
+    document.getElementById("headline").textContent = t.reflectionsTitle || "Daily Reflections";
+    document.getElementById("subtitle").textContent = t.reflectionsSubtitle || "A space to learn, grow, and be grateful.";
+    document.getElementById("totalLabel").textContent = t.totalReflections || "Total Reflections";
+    document.getElementById("reflectionQuote").textContent = t.reflectionQuote || "Each reflection brings you closer to self-understanding.";
+    document.getElementById("footerText").textContent = t.footer || "© DAYLIFE 2025 — Every day counts";
+
+    const addBtn = document.getElementById("addReflectionBtn");
+    const form = document.getElementById("reflectionForm");
+    const list = document.getElementById("reflectionList");
+    const total = document.getElementById("totalReflections");
+
+    const reflections = JSON.parse(localStorage.getItem("reflections") || "[]");
+
+    function renderReflections(){
+      list.innerHTML = "";
+      total.textContent = reflections.length;
+      if(reflections.length === 0){
+        const empty = document.createElement("p");
+        empty.textContent = t.noReflections || "No reflections yet. Start your daily reflection practice.";
+        list.appendChild(empty);
+      }
+      reflections.forEach((r,i)=>{
+        const item = document.createElement("div");
+        item.className = "reflection-item";
+        item.innerHTML = `
+          <div class="reflection-title">${r.title}</div>
+          <div class="reflection-date">${r.date}</div>
+          <div class="reflection-text">${r.text}</div>
+          <div class="reflection-actions">
+            <button class="delete">${t.delete||"Delete"}</button>
+          </div>
+        `;
+        item.querySelector(".delete").addEventListener("click",()=>{
+          reflections.splice(i,1);
+          saveReflections();
+        });
+        list.appendChild(item);
+      });
+    }
+
+    function saveReflections(){
+      localStorage.setItem("reflections",JSON.stringify(reflections));
+      renderReflections();
+    }
+
+    addBtn.addEventListener("click",()=>{
+      form.style.display = form.style.display==="none" ? "block" : "none";
+    });
+
+    form.addEventListener("submit",(e)=>{
+      e.preventDefault();
+      const title = document.getElementById("reflectionTitle").value.trim();
+      const text = document.getElementById("reflectionText").value.trim();
+      if(!title || !text) return;
+      const date = new Date().toLocaleDateString();
+      reflections.push({title,text,date});
+      saveReflections();
+      form.reset();
+      form.style.display="none";
+    });
+
+    renderReflections();
+    window.addEventListener("load",()=>document.body.classList.add("loaded"));
+  </script>
+</body>
+</html>
