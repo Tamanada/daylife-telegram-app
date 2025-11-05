@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>DAYLIFE – Profile</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    :root {
+      --bg-gradient: linear-gradient(135deg,#eff6ff,#f5e9ff,#ffe4f3);
+      --card-bg:#ffffff;
+      --card-border:#e2e8f0;
+      --text-main:#0f172a;
+      --text-muted:#64748b;
+      --primary:#2563eb;
+      --primary-2:#7c3aed;
+      --shadow-soft:0 24px 60px rgba(15,23,42,.1);
+      --radius-card:24px;
+    }
+
+    body {
+      margin:0;
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:var(--bg-gradient);
+      color:var(--text-main);
+      min-height:100vh;
+      padding:20px;
+      opacity:0;
+      transition:opacity .4s ease-in-out;
+    }
+    body.loaded {opacity:1;}
+
+    h1 {text-align:center;font-size:32px;margin-bottom:10px;}
+    p {text-align:center;color:var(--text-muted);margin-bottom:20px;}
+
+    .card {
+      background:var(--card-bg);
+      border:1px solid var(--card-border);
+      border-radius:var(--radius-card);
+      box-shadow:var(--shadow-soft);
+      padding:24px;
+      max-width:600px;
+      margin:0 auto 20px;
+    }
+
+    .button {
+      background:linear-gradient(90deg,var(--primary),var(--primary-2));
+      color:#fff;
+      border:none;
+      border-radius:999px;
+      padding:10px 20px;
+      font-weight:600;
+      cursor:pointer;
+      transition:filter .2s,transform .1s;
+    }
+    .button:hover {filter:brightness(1.05);transform:translateY(-1px);}
+
+    .input, select {
+      width:100%;
+      padding:8px;
+      border-radius:8px;
+      border:1px solid #cbd5f5;
+      font-size:14px;
+      margin-bottom:12px;
+    }
+
+    .stat-box {
+      background:#fff;
+      border:1px solid var(--card-border);
+      border-radius:16px;
+      box-shadow:var(--shadow-soft);
+      padding:16px;
+      min-width:140px;
+      text-align:center;
+      margin-bottom:10px;
+    }
+    .stats {display:flex;justify-content:space-around;flex-wrap:wrap;}
+
+    footer{text-align:center;margin-top:30px;color:var(--text-muted);font-size:12px;}
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h1 id="headline">Profile</h1>
+    <p id="subtitle">Your journey at a glance</p>
+
+    <div class="stats">
+      <div class="stat-box">
+        <div id="stars" style="font-size:24px;font-weight:700;color:gold;">0</div>
+        <div id="starsLabel">Stars</div>
+      </div>
+      <div class="stat-box">
+        <div id="dreamsCompleted" style="font-size:24px;font-weight:700;color:#16a34a;">0</div>
+        <div id="dreamsLabel">Dreams Completed</div>
+      </div>
+      <div class="stat-box">
+        <div id="reflectionsCount" style="font-size:24px;font-weight:700;color:#9333ea;">0</div>
+        <div id="reflectionsLabel">Reflections</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 id="settingsTitle">Settings</h3>
+    <label id="birthLabel">Birth Date</label>
+    <input type="date" id="birthDate" class="input">
+
+    <label id="sexLabel">Sex</label>
+    <select id="sex" class="input">
+      <option value="male">Male</option>
+      <option value="female">Female</option>
+    </select>
+
+    <label id="countryLabel">Country</label>
+    <select id="country" class="input"></select>
+
+    <label id="themeLabel">Theme</label>
+    <select id="theme" class="input">
+      <option value="light">Light</option>
+      <option value="dark">Dark</option>
+      <option value="lunar">Lunar</option>
+    </select>
+
+    <label id="languageLabel">Language</label>
+    <select id="langSelect" class="input"></select>
+
+    <button class="button" id="resetBtn">Reset Data</button>
+  </div>
+
+  <footer id="footerText">© DAYLIFE 2025 — Every day counts</footer>
+
+  <script src="assets/langs.js"></script>
+  <script>
+    const profile = JSON.parse(localStorage.getItem("daylifeProfile")||"{}");
+    const dreams = JSON.parse(localStorage.getItem("dreams")||"[]");
+    const reflections = JSON.parse(localStorage.getItem("reflections")||"[]");
+    const lang = profile.lang || "en";
+    const t = LANGS[lang] || LANGS.en;
+
+    // --- Traductions
+    document.getElementById("headline").textContent = t.profileTitle || "Profile";
+    document.getElementById("subtitle").textContent = t.profileSubtitle || "Your journey at a glance";
+    document.getElementById("settingsTitle").textContent = t.settingsTitle || "Settings";
+    document.getElementById("birthLabel").textContent = t.birthLabel || "Birth Date";
+    document.getElementById("sexLabel").textContent = t.sexLabel || "Sex";
+    document.getElementById("countryLabel").textContent = t.countryLabel || "Country";
+    document.getElementById("themeLabel").textContent = t.themeLabel || "Theme";
+    document.getElementById("languageLabel").textContent = t.languageLabel || "Language";
+    document.getElementById("resetBtn").textContent = t.resetBtn || "Reset Data";
+    document.getElementById("starsLabel").textContent = t.starsLabel || "Stars";
+    document.getElementById("dreamsLabel").textContent = t.dreamsLabel || "Dreams Completed";
+    document.getElementById("reflectionsLabel").textContent = t.reflectionsLabel || "Reflections";
+    document.getElementById("footerText").textContent = t.footer || "© DAYLIFE 2025 — Every day counts";
+
+    // --- Stats
+    document.getElementById("stars").textContent = profile.stars || 0;
+    document.getElementById("dreamsCompleted").textContent = dreams.filter(d=>d.completed).length;
+    document.getElementById("reflectionsCount").textContent = reflections.length;
+
+    // --- Remplir les selects
+    const countries = ["Thailand","France","Myanmar","United States","India","China","Brazil","Russia","United Kingdom","Germany","Japan","Indonesia","Mexico"];
+    const countrySelect = document.getElementById("country");
+    countries.forEach(c=>{
+      const opt=document.createElement("option");
+      opt.value=c; opt.textContent=c;
+      if(profile.country===c) opt.selected=true;
+      countrySelect.appendChild(opt);
+    });
+
+    const langSelect = document.getElementById("langSelect");
+    Object.keys(LANGS).forEach(k=>{
+      const opt=document.createElement("option");
+      opt.value=k; opt.textContent=k.toUpperCase();
+      if(k===lang) opt.selected=true;
+      langSelect.appendChild(opt);
+    });
+
+    // --- Appliquer les valeurs du profil
+    document.getElementById("birthDate").value = profile.birthDate || "";
+    document.getElementById("sex").value = profile.sex || "male";
+    document.getElementById("theme").value = profile.theme || "light";
+
+    // --- Gestion des changements
+    function saveProfile(){
+      localStorage.setItem("daylifeProfile",JSON.stringify(profile));
+    }
+
+    document.getElementById("birthDate").addEventListener("change",(e)=>{
+      profile.birthDate = e.target.value; saveProfile();
+    });
+    document.getElementById("sex").addEventListener("change",(e)=>{
+      profile.sex = e.target.value; saveProfile();
+    });
+    document.getElementById("country").addEventListener("change",(e)=>{
+      profile.country = e.target.value; saveProfile();
+    });
+    document.getElementById("theme").addEventListener("change",(e)=>{
+      profile.theme = e.target.value; saveProfile();
+    });
+    langSelect.addEventListener("change",(e)=>{
+      profile.lang = e.target.value; saveProfile(); location.reload();
+    });
+
+    document.getElementById("resetBtn").addEventListener("click",()=>{
+      if(confirm(t.resetConfirm || "Are you sure you want to clear all your data?")){
+        localStorage.clear();
+        location.reload();
+      }
+    });
+
+    window.addEventListener("load",()=>document.body.classList.add("loaded"));
+  </script>
+</body>
+</html>
