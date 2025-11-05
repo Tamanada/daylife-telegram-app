@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <title>DAYLIFE – Every day counts</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <style>
     :root {
       --bg-gradient: linear-gradient(135deg,#eff6ff,#f5e9ff,#ffe4f3);
@@ -16,8 +17,10 @@
       --shadow-soft:0 24px 60px rgba(15,23,42,.1);
       --radius-card:24px;
     }
+
     *{box-sizing:border-box;}
-    body{
+
+    body {
       margin:0;
       font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
       background:var(--bg-gradient);
@@ -28,10 +31,15 @@
       justify-content:center;
       min-height:100vh;
       padding:20px;
+      opacity:0;
+      transition:opacity 0.4s ease-in-out;
     }
+    body.loaded { opacity:1; }
+
     h1{font-size:32px;font-weight:700;margin-bottom:10px;text-align:center;}
     p{color:var(--text-muted);text-align:center;}
-    .card{
+
+    .card {
       background:var(--card-bg);
       border:1px solid var(--card-border);
       border-radius:var(--radius-card);
@@ -41,7 +49,8 @@
       width:100%;
       text-align:center;
     }
-    .button{
+
+    .button {
       display:inline-block;
       margin:8px;
       padding:12px 20px;
@@ -52,14 +61,27 @@
       text-decoration:none;
       transition:filter .2s,transform .1s;
     }
-    .button:hover{filter:brightness(1.05);transform:translateY(-1px);}
-    select{
-      padding:6px 10px;border-radius:999px;border:1px solid #cbd5f5;
-      background:rgba(255,255,255,.9);font-size:13px;margin-bottom:16px;
+
+    .button:hover { filter:brightness(1.05); transform:translateY(-1px); }
+
+    select {
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid #cbd5f5;
+      background:rgba(255,255,255,.9);
+      font-size:13px;
+      margin-bottom:16px;
     }
-    footer{margin-top:30px;font-size:12px;color:var(--text-muted);}
+
+    footer {
+      margin-top:30px;
+      font-size:12px;
+      color:var(--text-muted);
+      text-align:center;
+    }
   </style>
 </head>
+
 <body>
   <div class="card">
     <h1 id="headline">DAYLIFE</h1>
@@ -77,55 +99,39 @@
 
   <footer id="footerText">© DAYLIFE 2025 — Every day counts</footer>
 
-<script>
-const translations={
-  en:{tagline:"Every day counts. What will you do with yours?",
-      life:"Life Counter",dreams:"Dreams",reflect:"Reflections",profile:"Profile",footer:"© DAYLIFE 2025 — Every day counts"},
-  fr:{tagline:"Chaque jour compte. Que ferez-vous du vôtre ?",
-      life:"Compteur de vie",dreams:"Rêves",reflect:"Réflexions",profile:"Profil",footer:"© DAYLIFE 2025 — Chaque jour compte"},
-  es:{tagline:"Cada día cuenta. ¿Qué harás con el tuyo?",
-      life:"Contador de vida",dreams:"Sueños",reflect:"Reflexiones",profile:"Perfil",footer:"© DAYLIFE 2025 — Cada día cuenta"},
-  zh:{tagline:"每一天都很重要。你会如何度过？",
-      life:"生命计数器",dreams:"梦想",reflect:"反思",profile:"个人资料",footer:"© DAYLIFE 2025 — 每一天都重要"},
-  hi:{tagline:"हर दिन मायने रखता है। आप क्या करेंगे?",
-      life:"जीवन गणक",dreams:"सपने",reflect:"चिंतन",profile:"प्रोफ़ाइल",footer:"© DAYLIFE 2025 — हर दिन मायने रखता है"},
-  ar:{tagline:"كل يوم له أهمية. ماذا ستفعل بيومك؟",
-      life:"عداد الحياة",dreams:"الأحلام",reflect:"تأملات",profile:"الملف الشخصي",footer:"© DAYLIFE 2025 — كل يوم له أهمية"},
-  bn:{tagline:"প্রতিটি দিনই গুরুত্বপূর্ণ। আপনি কী করবেন?",
-      life:"জীবন গণনা",dreams:"স্বপ্ন",reflect:"চিন্তন",profile:"প্রোফাইল",footer:"© DAYLIFE 2025 — প্রতিটি দিনই গুরুত্বপূর্ণ"},
-  pt:{tagline:"Cada dia conta. O que você fará com o seu?",
-      life:"Contador de vida",dreams:"Sonhos",reflect:"Reflexões",profile:"Perfil",footer:"© DAYLIFE 2025 — Cada dia conta"},
-  ru:{tagline:"Каждый день имеет значение. Что сделаешь ты?",
-      life:"Счётчик жизни",dreams:"Мечты",reflect:"Размышления",profile:"Профиль",footer:"© DAYLIFE 2025 — Каждый день имеет значение"},
-  id:{tagline:"Setiap hari berarti. Apa yang akan kamu lakukan?",
-      life:"Penghitung hidup",dreams:"Mimpi",reflect:"Refleksi",profile:"Profil",footer:"© DAYLIFE 2025 — Setiap hari berarti"},
-  th:{tagline:"ทุกวันมีคุณค่า คุณจะทำอะไรกับวันของคุณ?",
-      life:"ตัวนับชีวิต",dreams:"ความฝัน",reflect:"การไตร่ตรอง",profile:"โปรไฟล์",footer:"© DAYLIFE 2025 — ทุกวันมีคุณค่า"},
-  my:{tagline:"နေ့တိုင်းအရေးကြီးပါတယ်။ သင်ဘာလုပ်မလဲ။",
-      life:"အသက်ရက်တွက်စက်",dreams:"အိပ်မက်များ",reflect:"စဉ်းစားမှုများ",profile:"ပရိုဖိုင်",footer:"© DAYLIFE 2025 — နေ့တိုင်းအရေးကြီးပါသည်"}
-};
+  <!-- Import des langues -->
+  <script src="assets/langs.js"></script>
 
-const langSel=document.getElementById("languageSelect");
-Object.keys(translations).forEach(code=>{
-  const opt=document.createElement("option");
-  opt.value=code;
-  opt.textContent=code.toUpperCase();
-  langSel.appendChild(opt);
-});
-const navLang=(navigator.language||"en").slice(0,2);
-langSel.value=translations[navLang]?navLang:"en";
+  <script>
+    // Langue automatique + menu
+    const langSel = document.getElementById("languageSelect");
+    Object.keys(LANGS).forEach(code => {
+      const opt = document.createElement("option");
+      opt.value = code;
+      opt.textContent = code.toUpperCase();
+      langSel.appendChild(opt);
+    });
 
-function applyLang(l){
-  const t=translations[l]||translations.en;
-  document.getElementById("tagline").textContent=t.tagline;
-  document.getElementById("lifeBtn").textContent=t.life;
-  document.getElementById("dreamsBtn").textContent=t.dreams;
-  document.getElementById("reflectBtn").textContent=t.reflect;
-  document.getElementById("profileBtn").textContent=t.profile;
-  document.getElementById("footerText").textContent=t.footer;
-}
-applyLang(langSel.value);
-langSel.addEventListener("change",()=>applyLang(langSel.value));
-</script>
+    const navLang = (navigator.language || "en").slice(0,2);
+    langSel.value = LANGS[navLang] ? navLang : "en";
+
+    function applyLang(l) {
+      const t = LANGS[l] || LANGS.en;
+      document.getElementById("tagline").textContent = t.slogan;
+      document.getElementById("lifeBtn").textContent = t.life;
+      document.getElementById("dreamsBtn").textContent = t.dreams;
+      document.getElementById("reflectBtn").textContent = t.reflections;
+      document.getElementById("profileBtn").textContent = t.profile;
+      document.getElementById("footerText").textContent = t.footer;
+    }
+
+    applyLang(langSel.value);
+    langSel.addEventListener("change", () => applyLang(langSel.value));
+
+    // Effet fade-in au chargement
+    window.addEventListener("load", () => {
+      document.body.classList.add("loaded");
+    });
+  </script>
 </body>
 </html>
