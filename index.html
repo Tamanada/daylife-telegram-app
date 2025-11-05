@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>DAYLIFE – Every day counts</title>
+  <title>DAYLIFE — Every Day Counts</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <style>
@@ -19,175 +19,144 @@
     }
 
     *{box-sizing:border-box;}
-
     body {
       margin:0;
       font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
       background:var(--bg-gradient);
       color:var(--text-main);
+      min-height:100vh;
       display:flex;
       flex-direction:column;
       align-items:center;
       justify-content:center;
-      min-height:100vh;
       padding:20px;
+      text-align:center;
       opacity:0;
-      transition:opacity 0.4s ease-in-out;
+      transition:opacity .4s ease-in-out;
     }
-    body.loaded { opacity:1; }
+    body.loaded {opacity:1;}
 
-    h1{font-size:32px;font-weight:700;margin-bottom:10px;text-align:center;}
-    p{color:var(--text-muted);text-align:center;}
+    h1 {
+      font-size:34px;
+      font-weight:700;
+      margin-bottom:8px;
+      background:linear-gradient(90deg,var(--primary),var(--primary-2));
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+    }
+    h2 {
+      font-weight:500;
+      color:var(--text-muted);
+      margin-bottom:30px;
+    }
 
     .card {
       background:var(--card-bg);
       border:1px solid var(--card-border);
       border-radius:var(--radius-card);
       box-shadow:var(--shadow-soft);
-      padding:32px 24px;
-      max-width:500px;
+      padding:24px;
       width:100%;
-      text-align:center;
+      max-width:500px;
+      margin-bottom:40px;
     }
 
-    form {
+    .menu {
       display:flex;
-      flex-direction:column;
-      gap:16px;
-      margin-top:16px;
+      justify-content:space-around;
+      position:fixed;
+      bottom:10px;
+      left:50%;
+      transform:translateX(-50%);
+      width:95%;
+      max-width:500px;
+      background:rgba(255,255,255,0.9);
+      border-radius:999px;
+      box-shadow:0 4px 30px rgba(0,0,0,0.1);
+      backdrop-filter:blur(6px);
+      padding:10px;
     }
 
-    label {
-      font-weight:500;
-      text-align:left;
-      margin-bottom:4px;
-      display:block;
-      color:var(--text-main);
-    }
-
-    input, select {
+    .menu button {
+      background:none;
+      border:none;
+      font-weight:600;
+      color:var(--text-muted);
+      cursor:pointer;
       padding:10px;
       border-radius:12px;
-      border:1px solid #cbd5f5;
-      font-size:14px;
-      background:#f8fafc;
+      transition:all .2s ease-in-out;
+      flex:1;
     }
 
-    .button {
-      display:inline-block;
-      margin-top:12px;
-      padding:12px 20px;
-      border-radius:999px;
-      font-weight:600;
-      color:#fff;
+    .menu button:hover, .menu button.active {
       background:linear-gradient(90deg,var(--primary),var(--primary-2));
-      text-decoration:none;
+      color:#fff;
+    }
+
+    .button-main {
+      margin-top:20px;
+      background:linear-gradient(90deg,var(--primary),var(--primary-2));
+      color:#fff;
       border:none;
+      border-radius:999px;
+      padding:12px 28px;
+      font-size:16px;
+      font-weight:600;
       cursor:pointer;
       transition:filter .2s,transform .1s;
     }
+    .button-main:hover {filter:brightness(1.05);transform:translateY(-1px);}
 
-    .button:hover { filter:brightness(1.05); transform:translateY(-1px); }
-
-    .message { margin-top:10px; font-size:13px; color:var(--text-muted); }
+    footer {
+      margin-top:40px;
+      font-size:12px;
+      color:var(--text-muted);
+    }
   </style>
 </head>
 
 <body>
   <div class="card">
     <h1 id="headline">DAYLIFE</h1>
-    <p id="tagline">Every day counts. What will you do with yours?</p>
-
-    <form id="setupForm">
-      <div>
-        <label for="dob" id="dobLabel">Date of birth *</label>
-        <input type="date" id="dob" />
-      </div>
-
-      <div>
-        <label for="sex" id="sexLabel">Sex *</label>
-        <select id="sex">
-          <option value="">Select your sex</option>
-          <option value="male">Male</option>
-          <option value="female">Female</option>
-        </select>
-      </div>
-
-      <div>
-        <label for="country" id="countryLabel">Country *</label>
-        <select id="country">
-          <option value="">Select your country</option>
-          <option value="FR">France</option>
-          <option value="TH">Thailand</option>
-          <option value="MM">Myanmar</option>
-          <option value="US">United States</option>
-          <option value="ES">Spain</option>
-          <option value="BR">Brazil</option>
-          <option value="IN">India</option>
-          <option value="CN">China</option>
-          <option value="RU">Russia</option>
-        </select>
-      </div>
-
-      <div>
-        <label for="mode" id="calcLabel">Life calculation mode</label>
-        <select id="mode">
-          <option value="30000_days">30,000 days (default)</option>
-          <option value="by_demographics">Real (based on my profile)</option>
-        </select>
-      </div>
-
-      <button type="submit" class="button" id="startBtn">Start my journey</button>
-      <div class="message" id="resultMsg"></div>
-    </form>
+    <h2 id="tagline">Every day counts. What will you do with yours?</h2>
+    <button class="button-main" id="startBtn">Continue your journey 🌍</button>
   </div>
+
+  <nav class="menu">
+    <button onclick="go('life.html')" id="lifeBtn">🌅 Life</button>
+    <button onclick="go('dreams.html')" id="dreamsBtn">💭 Dreams</button>
+    <button onclick="go('reflections.html')" id="reflectionsBtn">🪞 Reflect</button>
+    <button onclick="go('stars.html')" id="starsBtn">⭐ Stars</button>
+    <button onclick="go('profile.html')" id="profileBtn">👤 Profile</button>
+  </nav>
 
   <footer id="footerText">© DAYLIFE 2025 — Every day counts</footer>
 
   <script src="assets/langs.js"></script>
-
   <script>
-    const langSel = detectLang();
-    const t = LANGS[langSel] || LANGS.en;
+    // Charger le profil et la langue
+    const profile = JSON.parse(localStorage.getItem("daylifeProfile")||"{}");
+    const lang = profile.lang || "en";
+    const t = LANGS[lang] || LANGS.en;
 
-    document.getElementById("tagline").textContent = t.slogan;
-    document.getElementById("dobLabel").textContent = t.dobLabel || "Date of birth *";
-    document.getElementById("sexLabel").textContent = t.sexLabel || "Sex *";
-    document.getElementById("countryLabel").textContent = t.countryLabel || "Country *";
-    document.getElementById("calcLabel").textContent = t.calcLabel || "Life calculation mode";
-    document.getElementById("startBtn").textContent = t.start || "Start my journey";
-    document.getElementById("footerText").textContent = t.footer || "";
+    // Traductions
+    document.getElementById("headline").textContent = t.appName || "DAYLIFE";
+    document.getElementById("tagline").textContent = t.appTagline || "Every day counts. What will you do with yours?";
+    document.getElementById("startBtn").textContent = t.continueBtn || "Continue your journey 🌍";
+    document.getElementById("lifeBtn").textContent = t.lifeBtn || "🌅 Life";
+    document.getElementById("dreamsBtn").textContent = t.dreamsBtn || "💭 Dreams";
+    document.getElementById("reflectionsBtn").textContent = t.reflectionsBtn || "🪞 Reflect";
+    document.getElementById("starsBtn").textContent = t.starsBtn || "⭐ Stars";
+    document.getElementById("profileBtn").textContent = t.profileBtn || "👤 Profile";
+    document.getElementById("footerText").textContent = t.footer || "© DAYLIFE 2025 — Every day counts";
 
-    const form = document.getElementById("setupForm");
-    const msg = document.getElementById("resultMsg");
+    // Navigation
+    function go(page){ window.location.href = page; }
 
-    form.addEventListener("submit", (e) => {
-      e.preventDefault();
-      const dob = document.getElementById("dob").value;
-      const sex = document.getElementById("sex").value;
-      const country = document.getElementById("country").value;
-      const mode = document.getElementById("mode").value;
+    document.getElementById("startBtn").addEventListener("click",()=> go("life.html"));
 
-      if (!dob || !sex || !country) {
-        msg.textContent = t.errorIncomplete || "Please fill in all required fields.";
-        msg.style.color = "red";
-        return;
-      }
-
-      const profile = { dob, sex, country, mode, lang: langSel };
-      localStorage.setItem("daylifeProfile", JSON.stringify(profile));
-
-      // ✅ redirect to life.html
-      window.location.href = "life.html";
-    });
-
-    // ✅ auto redirect if profile already exists
-    const existing = localStorage.getItem("daylifeProfile");
-    if (existing) window.location.href = "life.html";
-
-    window.addEventListener("load", () => {
-      document.body.classList.add("loaded");
-    });
+    window.addEventListener("load",()=>document.body.classList.add("loaded"));
   </script>
 </body>
 </html>
