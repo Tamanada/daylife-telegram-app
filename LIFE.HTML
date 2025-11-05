@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>DAYLIFE – Life Counter</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    /* reuse same color theme */
+    :root {
+      --bg-gradient: linear-gradient(135deg,#eff6ff,#f5e9ff,#ffe4f3);
+      --card-bg:#ffffff;
+      --card-border:#e2e8f0;
+      --text-main:#0f172a;
+      --text-muted:#64748b;
+      --primary:#2563eb;
+      --primary-2:#7c3aed;
+      --shadow-soft:0 24px 60px rgba(15,23,42,.1);
+      --radius-card:24px;
+    }
+    *{box-sizing:border-box;}
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:var(--bg-gradient);
+      color:var(--text-main);
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      padding:16px;
+    }
+    .language-switcher{
+      position:absolute;top:10px;right:10px;font-size:12px;color:var(--text-muted);
+    }
+    select{padding:6px 10px;border-radius:999px;border:1px solid #cbd5f5;background:rgba(255,255,255,.9);}
+    .card{
+      max-width:480px;width:100%;
+      background:var(--card-bg);
+      border:1px solid var(--card-border);
+      border-radius:var(--radius-card);
+      box-shadow:var(--shadow-soft);
+      padding:32px 24px;
+      text-align:center;
+    }
+    h1{font-size:28px;margin:0 0 10px;font-weight:700;}
+    .subtitle{font-size:15px;color:var(--text-muted);margin-bottom:24px;}
+    .count{font-size:64px;font-weight:700;background:linear-gradient(90deg,var(--primary),var(--primary-2));
+      -webkit-background-clip:text;color:transparent;margin:16px 0;}
+    .progress-wrapper{width:100%;height:14px;background:#e5e7eb;border-radius:999px;overflow:hidden;margin:16px 0;}
+    .progress-bar{height:100%;background:linear-gradient(90deg,var(--primary),var(--primary-2));width:0%;transition:width 1s ease;}
+    .quote{font-style:italic;color:var(--text-muted);margin:20px 0;}
+    button{border:none;border-radius:999px;padding:12px 18px;font-weight:600;
+      background:linear-gradient(90deg,var(--primary),var(--primary-2));color:#fff;cursor:pointer;}
+    button:hover{filter:brightness(1.05);}
+  </style>
+</head>
+<body>
+  <div class="language-switcher">
+    <select id="langSelect"></select>
+  </div>
+
+  <div class="card">
+    <h1 id="title">DAYLIFE</h1>
+    <p class="subtitle" id="subtitle">How many days did you arrive on earth?</p>
+
+    <div class="count" id="daysCount">0</div>
+    <div class="progress-wrapper">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <p class="quote" id="dailyQuote"></p>
+
+    <button id="backBtn">← Back to Setup</button>
+  </div>
+
+<script>
+/* --- translations (simplified reuse from index) --- */
+const t = {
+  en:{title:"DAYLIFE",subtitle:"How many days did you arrive on earth?",
+      back:"← Back to Setup",quotes:["Every sunrise is a new chance.","Dream big, act daily.","Be present, it’s all you have."]},
+  fr:{title:"DAYLIFE",subtitle:"Combien de jours êtes-vous arrivé sur Terre ?",
+      back:"← Retour",quotes:["Chaque lever de soleil est une nouvelle chance.","Rêve grand, agis chaque jour.","Sois présent, c’est tout ce que tu as."]},
+  es:{title:"DAYLIFE",subtitle:"¿Cuántos días llevas en la Tierra?",
+      back:"← Volver",quotes:["Cada amanecer es una nueva oportunidad.","Sueña en grande, actúa a diario.","Vive el presente, es todo lo que tienes."]},
+  zh:{title:"DAYLIFE",subtitle:"你来到地球多少天了？",
+      back:"← 返回",quotes:["每个日出都是新的机会。","大胆梦想，每天行动。","活在当下，这是你所拥有的一切。"]},
+  hi:{title:"DAYLIFE",subtitle:"आप पृथ्वी पर कितने दिन पहले आए थे?",
+      back:"← वापस जाएँ",quotes:["हर सूर्योदय एक नया मौका है।","बड़े सपने देखो, रोज़ काम करो।","वर्तमान में रहो, यही सब है।"]},
+  ar:{title:"DAYLIFE",subtitle:"كم يوماً مرّ منذ جئت إلى الأرض؟",
+      back:"← عودة",quotes:["كل شروق شمس فرصة جديدة.","احلم كبيراً و اعمل يومياً.","كن حاضراً، فهذا كل ما لديك."]},
+  bn:{title:"DAYLIFE",subtitle:"আপনি পৃথিবীতে কতদিন আগে এসেছেন?",
+      back:"← ফিরে যান",quotes:["প্রতিটি সূর্যোদয় একটি নতুন সুযোগ।","বড় স্বপ্ন দেখুন, প্রতিদিন কাজ করুন।","বর্তমানে থাকুন, এটিই আপনার সব।"]},
+  pt:{title:"DAYLIFE",subtitle:"Há quantos dias você chegou à Terra?",
+      back:"← Voltar",quotes:["Cada nascer do sol é uma nova chance.","Sonhe grande, aja todos os dias.","Esteja presente, é tudo o que você tem."]},
+  ru:{title:"DAYLIFE",subtitle:"Сколько дней прошло с вашего появления на Земле?",
+      back:"← Назад",quotes:["Каждый рассвет — новый шанс.","Мечтай масштабно, действуй ежедневно.","Живи настоящим — это всё, что у тебя есть."]},
+  id:{title:"DAYLIFE",subtitle:"Berapa hari sejak kamu tiba di bumi?",
+      back:"← Kembali",quotes:["Setiap matahari terbit adalah kesempatan baru.","Bermimpilah besar, bertindak setiap hari.","Hiduplah di saat ini, itulah yang kamu miliki."]},
+  th:{title:"DAYLIFE",subtitle:"คุณมาอยู่บนโลกนี้มากี่วันแล้ว?",
+      back:"← กลับ",quotes:["ทุกเช้าเป็นโอกาสใหม่","ฝันให้ใหญ่ ทำทุกวัน","อยู่กับปัจจุบัน นั่นคือทั้งหมดที่คุณมี"]},
+  my:{title:"DAYLIFE",subtitle:"သင်ကမ္ဘာပေါ်ရောက်လာပြီး မည်မျှနေ့ဖြစ်ပြီလဲ။",
+      back:"← နောက်သို့",quotes:["နေဝင်ချိန်တိုင်းအခွင့်အလမ်းအသစ်ပါ။","အကြီးမားဆုံးအိပ်မက်တွေကို နေ့တိုင်းလုပ်ပါ။","ယခုအချိန်မှာနေပါ။"]},
+};
+
+/* detect language from storage or browser */
+function detectLang(){
+  const saved = JSON.parse(localStorage.getItem("daylifeProfile")||"{}").lang;
+  if(saved && t[saved]) return saved;
+  const nav=(navigator.language||"en").slice(0,2);
+  return t[nav]?nav:"en";
+}
+
+/* build select */
+const langSel=document.getElementById("langSelect");
+Object.keys(t).forEach(k=>{
+  const o=document.createElement("option");
+  o.value=k;o.textContent=k.toUpperCase();
+  langSel.appendChild(o);
+});
+
+let lang=detectLang();
+langSel.value=lang;
+applyLang(lang);
+
+/* compute life days */
+const profile=JSON.parse(localStorage.getItem("daylifeProfile")||"{}");
+if(!profile.dob){window.location.href="index.html";}
+const birth=new Date(profile.dob);
+const now=new Date();
+const diffDays=Math.floor((now-birth)/(1000*60*60*24));
+const total=profile.mode==="by_demographics"?28000:30000;
+document.getElementById("daysCount").textContent=diffDays.toLocaleString();
+const progress=Math.min((diffDays/total)*100,100);
+document.getElementById("progressBar").style.width=progress+"%";
+
+/* quote */
+const q=t[lang].quotes;
+document.getElementById("dailyQuote").textContent=q[Math.floor(Math.random()*q.length)];
+
+/* change lang */
+langSel.addEventListener("change",()=>{lang=langSel.value;applyLang(lang);});
+function applyLang(l){
+  const d=t[l]||t.en;
+  document.getElementById("title").textContent=d.title;
+  document.getElementById("subtitle").textContent=d.subtitle;
+  document.getElementById("backBtn").textContent=d.back;
+  document.getElementById("dailyQuote").textContent=d.quotes[Math.floor(Math.random()*d.quotes.length)];
+}
+
+/* back */
+document.getElementById("backBtn").onclick=()=>{window.location.href="index.html";};
+</script>
+</body>
+</html>
