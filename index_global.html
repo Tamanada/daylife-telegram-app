@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>DAYLIFE — Every Day Counts</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    :root {
+      --bg-gradient: linear-gradient(135deg,#eff6ff,#f5e9ff,#ffe4f3);
+      --card-bg:#ffffff;
+      --card-border:#e2e8f0;
+      --text-main:#0f172a;
+      --text-muted:#64748b;
+      --primary:#2563eb;
+      --primary-2:#7c3aed;
+      --shadow-soft:0 24px 60px rgba(15,23,42,.1);
+      --radius-card:24px;
+    }
+
+    *{box-sizing:border-box;}
+    body {
+      margin:0;
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:var(--bg-gradient);
+      color:var(--text-main);
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+      text-align:center;
+      opacity:0;
+      transition:opacity .4s ease-in-out;
+    }
+    body.loaded {opacity:1;}
+
+    h1 {
+      font-size:34px;
+      font-weight:700;
+      margin-bottom:8px;
+      background:linear-gradient(90deg,var(--primary),var(--primary-2));
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+    }
+    h2 {
+      font-weight:500;
+      color:var(--text-muted);
+      margin-bottom:30px;
+    }
+
+    .card {
+      background:var(--card-bg);
+      border:1px solid var(--card-border);
+      border-radius:var(--radius-card);
+      box-shadow:var(--shadow-soft);
+      padding:24px;
+      width:100%;
+      max-width:500px;
+      margin-bottom:40px;
+    }
+
+    .menu {
+      display:flex;
+      justify-content:space-around;
+      position:fixed;
+      bottom:10px;
+      left:50%;
+      transform:translateX(-50%);
+      width:95%;
+      max-width:500px;
+      background:rgba(255,255,255,0.9);
+      border-radius:999px;
+      box-shadow:0 4px 30px rgba(0,0,0,0.1);
+      backdrop-filter:blur(6px);
+      padding:10px;
+    }
+
+    .menu button {
+      background:none;
+      border:none;
+      font-weight:600;
+      color:var(--text-muted);
+      cursor:pointer;
+      padding:10px;
+      border-radius:12px;
+      transition:all .2s ease-in-out;
+      flex:1;
+    }
+
+    .menu button:hover, .menu button.active {
+      background:linear-gradient(90deg,var(--primary),var(--primary-2));
+      color:#fff;
+    }
+
+    .button-main {
+      margin-top:20px;
+      background:linear-gradient(90deg,var(--primary),var(--primary-2));
+      color:#fff;
+      border:none;
+      border-radius:999px;
+      padding:12px 28px;
+      font-size:16px;
+      font-weight:600;
+      cursor:pointer;
+      transition:filter .2s,transform .1s;
+    }
+    .button-main:hover {filter:brightness(1.05);transform:translateY(-1px);}
+
+    footer {
+      margin-top:40px;
+      font-size:12px;
+      color:var(--text-muted);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="card">
+    <h1 id="headline">DAYLIFE</h1>
+    <h2 id="tagline">Every day counts. What will you do with yours?</h2>
+    <button class="button-main" id="startBtn">Continue your journey 🌍</button>
+  </div>
+
+  <nav class="menu">
+    <button onclick="go('life.html')" id="lifeBtn">🌅 Life</button>
+    <button onclick="go('dreams.html')" id="dreamsBtn">💭 Dreams</button>
+    <button onclick="go('reflections.html')" id="reflectionsBtn">🪞 Reflect</button>
+    <button onclick="go('stars.html')" id="starsBtn">⭐ Stars</button>
+    <button onclick="go('profile.html')" id="profileBtn">👤 Profile</button>
+  </nav>
+
+  <footer id="footerText">© DAYLIFE 2025 — Every day counts</footer>
+
+  <script src="assets/langs.js"></script>
+  <script>
+    // Charger le profil et la langue
+    const profile = JSON.parse(localStorage.getItem("daylifeProfile")||"{}");
+    const lang = profile.lang || "en";
+    const t = LANGS[lang] || LANGS.en;
+
+    // Traductions
+    document.getElementById("headline").textContent = t.appName || "DAYLIFE";
+    document.getElementById("tagline").textContent = t.appTagline || "Every day counts. What will you do with yours?";
+    document.getElementById("startBtn").textContent = t.continueBtn || "Continue your journey 🌍";
+    document.getElementById("lifeBtn").textContent = t.lifeBtn || "🌅 Life";
+    document.getElementById("dreamsBtn").textContent = t.dreamsBtn || "💭 Dreams";
+    document.getElementById("reflectionsBtn").textContent = t.reflectionsBtn || "🪞 Reflect";
+    document.getElementById("starsBtn").textContent = t.starsBtn || "⭐ Stars";
+    document.getElementById("profileBtn").textContent = t.profileBtn || "👤 Profile";
+    document.getElementById("footerText").textContent = t.footer || "© DAYLIFE 2025 — Every day counts";
+
+    // Navigation
+    function go(page){ window.location.href = page; }
+
+    document.getElementById("startBtn").addEventListener("click",()=> go("life.html"));
+
+    window.addEventListener("load",()=>document.body.classList.add("loaded"));
+  </script>
+</body>
+</html>
