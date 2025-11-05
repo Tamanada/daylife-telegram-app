@@ -11,18 +11,101 @@
     <h1>🌞 DAYLIFE</h1>
     <p>Each day counts. What will you do with yours?</p>
 
+    <!-- Country & Gender Inputs -->
     <div class="counter">
+      <select id="country">
+        <option value="">🌍 Select your country</option>
+      </select>
+
+      <select id="sex">
+        <option value="">🧍 Select your sex</option>
+        <option value="male">Male</option>
+        <option value="female">Female</option>
+      </select>
+
       <label for="birthDate">Enter your birth date:</label>
       <input type="date" id="birthDate" />
+
       <button id="calculate">Show My Days</button>
     </div>
 
+    <!-- Result -->
     <div id="result" class="hidden">
       <h2>You have lived <span id="daysLived"></span> days!</h2>
-      <p>Keep going — every sunrise is a new chance 🌅</p>
+      <p id="countryData"></p>
+      <p id="remaining"></p>
     </div>
   </div>
 
-  <script src="script.js"></script>
+  <script>
+    // === Load Country List from REST Countries API ===
+    async function loadCountries() {
+      try {
+        const res = await fetch("https://restcountries.com/v3.1/all");
+        const data = await res.json();
+        const sorted = data.sort((a, b) => a.name.common.localeCompare(b.name.common));
+        const select = document.getElementById("country");
+        sorted.forEach(c => {
+          const opt = document.createElement("option");
+          opt.value = c.cca2.toLowerCase();
+          opt.textContent = c.name.common;
+          select.appendChild(opt);
+        });
+      } catch (err) {
+        console.error("Error loading countries:", err);
+      }
+    }
+    loadCountries();
+
+    // === Fetch life expectancy from World Bank ===
+    async function getLifeExpectancy(countryCode, sex) {
+      const indicator =
+        sex === "male"
+          ? "SP.DYN.LE00.MA.IN"
+          : "SP.DYN.LE00.FE.IN";
+      const url = `https://api.worldbank.org/v2/country/${countryCode}/indicator/${indicator}?format=json`;
+      try {
+        const res = await fetch(url);
+        const data = await res.json();
+        if (data && data[1]) {
+          const latest = data[1].find(entry => entry.value !== null);
+          return latest ? latest.value : 75;
+        }
+      } catch (err) {
+        console.error("Error fetching life expectancy:", err);
+      }
+      return 75; // fallback default
+    }
+
+    // === Calculate and Display Results ===
+    document.getElementById("calculate").addEventListener("click", async () => {
+      const birthInput = document.getElementById("birthDate").value;
+      const sex = document.getElementById("sex").value;
+      const countryCode = document.getElementById("country").value;
+
+      if (!birthInput || !sex || !countryCode) {
+        alert("Please select country, sex, and enter your birth date.");
+        return;
+      }
+
+      const birthDate = new Date(birthInput);
+      const today = new Date();
+      const diff = today - birthDate;
+      const daysLived = Math.floor(diff / (1000 * 60 * 60 * 24));
+      document.getElementById("daysLived").textContent = daysLived.toLocaleString();
+
+      const lifeExp = await getLifeExpectancy(countryCode, sex);
+      const expectedDays = Math.round(lifeExp * 365);
+      const remainingDays = expectedDays - daysLived;
+
+      const countryText = document.getElementById("country").selectedOptions[0].text;
+      document.getElementById("countryData").innerHTML =
+        `In <strong>${countryText}</strong>, the average ${sex} lives about <strong>${lifeExp.toFixed(1)}</strong> years.`;
+      document.getElementById("remaining").innerHTML =
+        `You may have around <strong>${remainingDays.toLocaleString()}</strong> days left. Make each one count 🌙`;
+
+      document.getElementById("result").classList.remove("hidden");
+    });
+  </script>
 </body>
 </html>
