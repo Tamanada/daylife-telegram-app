@@ -1,0 +1,498 @@
+
+import React from 'react';
+import { base44 } from '@/api/base44Client';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { motion } from 'framer-motion';
+import { Star, Flame, Target, BookHeart, LogOut } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import ProfilePhoto from '../components/home/ProfilePhoto';
+import ReferralSection from '../components/profile/ReferralSection';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+
+const countries = [
+  { code: 'AF', name: 'Afghanistan' },
+  { code: 'ZA', name: 'Afrique du Sud' },
+  { code: 'AL', name: 'Albanie' },
+  { code: 'DZ', name: 'Algérie' },
+  { code: 'DE', name: 'Allemagne' },
+  { code: 'AD', name: 'Andorre' },
+  { code: 'AO', name: 'Angola' },
+  { code: 'SA', name: 'Arabie Saoudite' },
+  { code: 'AR', name: 'Argentine' },
+  { code: 'AM', name: 'Arménie' },
+  { code: 'AU', name: 'Australie' },
+  { code: 'AT', name: 'Autriche' },
+  { code: 'AZ', name: 'Azerbaïdjan' },
+  { code: 'BS', name: 'Bahamas' },
+  { code: 'BH', name: 'Bahreïn' },
+  { code: 'BD', name: 'Bangladesh' },
+  { code: 'BB', name: 'Barbade' },
+  { code: 'BE', name: 'Belgique' },
+  { code: 'BZ', name: 'Belize' },
+  { code: 'BJ', name: 'Bénin' },
+  { code: 'BT', name: 'Bhoutan' },
+  { code: 'BY', name: 'Biélorussie' },
+  { code: 'BO', name: 'Bolivie' },
+  { code: 'BA', name: 'Bosnie-Herzégovine' },
+  { code: 'BW', name: 'Botswana' },
+  { code: 'BR', name: 'Brésil' },
+  { code: 'BN', name: 'Brunei' },
+  { code: 'BG', name: 'Bulgarie' },
+  { code: 'BF', name: 'Burkina Faso' },
+  { code: 'BI', name: 'Burundi' },
+  { code: 'KH', name: 'Cambodge' },
+  { code: 'CM', name: 'Cameroun' },
+  { code: 'CA', name: 'Canada' },
+  { code: 'CV', name: 'Cap-Vert' },
+  { code: 'CL', name: 'Chili' },
+  { code: 'CN', name: 'Chine' },
+  { code: 'CY', name: 'Chypre' },
+  { code: 'CO', name: 'Colombie' },
+  { code: 'KM', name: 'Comores' },
+  { code: 'CG', name: 'Congo' },
+  { code: 'KR', name: 'Corée du Sud' },
+  { code: 'KP', name: 'Corée du Nord' },
+  { code: 'CR', name: 'Costa Rica' },
+  { code: 'CI', name: "Côte d'Ivoire" },
+  { code: 'HR', name: 'Croatie' },
+  { code: 'CU', name: 'Cuba' },
+  { code: 'DK', name: 'Danemark' },
+  { code: 'DJ', name: 'Djibouti' },
+  { code: 'DM', name: 'Dominique' },
+  { code: 'EG', name: 'Égypte' },
+  { code: 'AE', name: 'Émirats Arabes Unis' },
+  { code: 'EC', name: 'Équateur' },
+  { code: 'ER', name: 'Érythrée' },
+  { code: 'ES', name: 'Espagne' },
+  { code: 'EE', name: 'Estonie' },
+  { code: 'US', name: 'États-Unis' },
+  { code: 'ET', name: 'Éthiopie' },
+  { code: 'FJ', name: 'Fidji' },
+  { code: 'FI', name: 'Finlande' },
+  { code: 'FR', name: 'France' },
+  { code: 'GA', name: 'Gabon' },
+  { code: 'GM', name: 'Gambie' },
+  { code: 'GE', name: 'Géorgie' },
+  { code: 'GH', name: 'Ghana' },
+  { code: 'GR', name: 'Grèce' },
+  { code: 'GD', name: 'Grenade' },
+  { code: 'GT', name: 'Guatemala' },
+  { code: 'GN', name: 'Guinée' },
+  { code: 'GQ', name: 'Guinée équatoriale' },
+  { code: 'GW', name: 'Guinée-Bissau' },
+  { code: 'GY', name: 'Guyana' },
+  { code: 'HT', name: 'Haïti' },
+  { code: 'HN', name: 'Honduras' },
+  { code: 'HU', name: 'Hongrie' },
+  { code: 'IN', name: 'Inde' },
+  { code: 'ID', name: 'Indonésie' },
+  { code: 'IQ', name: 'Irak' },
+  { code: 'IR', name: 'Iran' },
+  { code: 'IE', name: 'Irlande' },
+  { code: 'IS', name: 'Islande' },
+  { code: 'IL', name: 'Israël' },
+  { code: 'IT', name: 'Italie' },
+  { code: 'JM', name: 'Jamaïque' },
+  { code: 'JP', name: 'Japon' },
+  { code: 'JO', name: 'Jordanie' },
+  { code: 'KZ', name: 'Kazakhstan' },
+  { code: 'KE', name: 'Kenya' },
+  { code: 'KG', name: 'Kirghizistan' },
+  { code: 'KI', name: 'Kiribati' },
+  { code: 'KW', name: 'Koweït' },
+  { code: 'LA', name: 'Laos' },
+  { code: 'LS', name: 'Lesotho' },
+  { code: 'LV', name: 'Lettonie' },
+  { code: 'LB', name: 'Liban' },
+  { code: 'LR', name: 'Liberia' },
+  { code: 'LY', name: 'Libye' },
+  { code: 'LI', name: 'Liechtenstein' },
+  { code: 'LT', name: 'Lituanie' },
+  { code: 'LU', name: 'Luxembourg' },
+  { code: 'MK', name: 'Macédoine du Nord' },
+  { code: 'MG', name: 'Madagascar' },
+  { code: 'MY', name: 'Malaisie' },
+  { code: 'MW', name: 'Malawi' },
+  { code: 'MV', name: 'Maldives' },
+  { code: 'ML', name: 'Mali' },
+  { code: 'MT', name: 'Malte' },
+  { code: 'MA', name: 'Maroc' },
+  { code: 'MH', name: 'Îles Marshall' },
+  { code: 'MU', name: 'Maurice' },
+  { code: 'MR', name: 'Mauritanie' },
+  { code: 'MX', name: 'Mexique' },
+  { code: 'FM', name: 'Micronésie' },
+  { code: 'MD', name: 'Moldavie' },
+  { code: 'MC', name: 'Monaco' },
+  { code: 'MN', name: 'Mongolie' },
+  { code: 'ME', name: 'Monténégro' },
+  { code: 'MZ', name: 'Mozambique' },
+  { code: 'MM', name: 'Myanmar' },
+  { code: 'NA', name: 'Namibie' },
+  { code: 'NR', name: 'Nauru' },
+  { code: 'NP', name: 'Népal' },
+  { code: 'NI', name: 'Nicaragua' },
+  { code: 'NE', name: 'Niger' },
+  { code: 'NG', name: 'Nigeria' },
+  { code: 'NO', name: 'Norvège' },
+  { code: 'NZ', name: 'Nouvelle-Zélande' },
+  { code: 'OM', name: 'Oman' },
+  { code: 'UG', name: 'Ouganda' },
+  { code: 'UZ', name: 'Ouzbékistan' },
+  { code: 'PK', name: 'Pakistan' },
+  { code: 'PW', name: 'Palaos' },
+  { code: 'PA', name: 'Panama' },
+  { code: 'PG', name: 'Papouasie-Nouvelle-Guinée' },
+  { code: 'PY', name: 'Paraguay' },
+  { code: 'NL', name: 'Pays-Bas' },
+  { code: 'PE', name: 'Pérou' },
+  { code: 'PH', name: 'Philippines' },
+  { code: 'PL', name: 'Pologne' },
+  { code: 'PT', name: 'Portugal' },
+  { code: 'QA', name: 'Qatar' },
+  { code: 'DO', name: 'République Dominicaine' },
+  { code: 'CD', name: 'République Démocratique du Congo' },
+  { code: 'CZ', name: 'République Tchèque' },
+  { code: 'RO', name: 'Roumanie' },
+  { code: 'GB', name: 'Royaume-Uni' },
+  { code: 'RU', name: 'Russie' },
+  { code: 'RW', name: 'Rwanda' },
+  { code: 'KN', name: 'Saint-Christophe-et-Niévès' },
+  { code: 'SM', name: 'Saint-Marin' },
+  { code: 'VC', name: 'Saint-Vincent-et-les-Grenadines' },
+  { code: 'LC', name: 'Sainte-Lucie' },
+  { code: 'SV', name: 'Salvador' },
+  { code: 'WS', name: 'Samoa' },
+  { code: 'ST', name: 'Sao Tomé-et-Principe' },
+  { code: 'SN', name: 'Sénégal' },
+  { code: 'RS', name: 'Serbie' },
+  { code: 'SC', name: 'Seychelles' },
+  { code: 'SL', name: 'Sierra Leone' },
+  { code: 'SG', name: 'Singapour' },
+  { code: 'SK', name: 'Slovaquie' },
+  { code: 'SI', name: 'Slovénie' },
+  { code: 'SO', name: 'Somalie' },
+  { code: 'SD', name: 'Soudan' },
+  { code: 'SS', name: 'Soudan du Sud' },
+  { code: 'LK', name: 'Sri Lanka' },
+  { code: 'SE', name: 'Suède' },
+  { code: 'CH', name: 'Suisse' },
+  { code: 'SR', name: 'Suriname' },
+  { code: 'SY', name: 'Syrie' },
+  { code: 'TJ', name: 'Tadjikistan' },
+  { code: 'TZ', name: 'Tanzanie' },
+  { code: 'TD', name: 'Tchad' },
+  { code: 'TH', name: 'Thaïlande' },
+  { code: 'TL', name: 'Timor oriental' },
+  { code: 'TG', name: 'Togo' },
+  { code: 'TO', name: 'Tonga' },
+  { code: 'TT', name: 'Trinité-et-Tobago' },
+  { code: 'TN', name: 'Tunisie' },
+  { code: 'TM', name: 'Turkménistan' },
+  { code: 'TR', name: 'Turquie' },
+  { code: 'TV', name: 'Tuvalu' },
+  { code: 'UA', name: 'Ukraine' },
+  { code: 'UY', name: 'Uruguay' },
+  { code: 'VU', name: 'Vanuatu' },
+  { code: 'VA', name: 'Vatican' },
+  { code: 'VE', name: 'Venezuela' },
+  { code: 'VN', name: 'Vietnam' },
+  { code: 'YE', name: 'Yémen' },
+  { code: 'ZM', name: 'Zambie' },
+  { code: 'ZW', name: 'Zimbabwe' },
+];
+
+export default function ProfilePage() {
+  const queryClient = useQueryClient();
+  
+  const { data: user } = useQuery({
+    queryKey: ['me'],
+    queryFn: () => base44.auth.me(),
+  });
+
+  const { data: dreams = [] } = useQuery({
+    queryKey: ['dreams'],
+    queryFn: () => base44.entities.Dream.list(),
+  });
+
+  const { data: reflections = [] } = useQuery({
+    queryKey: ['reflections'],
+    queryFn: () => base44.entities.Reflection.list(),
+  });
+
+  // Query all users to count referrals dynamically
+  const { data: allUsers = [] } = useQuery({
+    queryKey: ['all-users'],
+    queryFn: () => base44.entities.User.list(),
+    enabled: !!user?.referral_code,
+  });
+
+  // Calculate referral count dynamically
+  const referralCount = user?.referral_code 
+    ? allUsers.filter(u => u.referred_by === user.referral_code && u.date_of_birth).length 
+    : 0;
+
+  // Calculate total stars earned from referrals
+  const referralStars = referralCount * 5;
+
+  const handlePhotoUpdate = async (photoUrl) => {
+    await base44.auth.updateMe({ profile_photo_url: photoUrl });
+    queryClient.invalidateQueries(['me']);
+  };
+
+  const handleThemeChange = async (theme) => {
+    await base44.auth.updateMe({ theme_preference: theme });
+    queryClient.invalidateQueries(['me']);
+  };
+
+  const handleLifeCalculationChange = async (mode) => {
+    await base44.auth.updateMe({ life_calculation_mode: mode });
+    queryClient.invalidateQueries(['me']);
+  };
+
+  const handleBirthdayChange = async (newBirthday) => {
+    if (newBirthday) {
+      await base44.auth.updateMe({ date_of_birth: newBirthday });
+      queryClient.invalidateQueries(['me']);
+    }
+  };
+
+  const handleSexChange = async (newSex) => {
+    await base44.auth.updateMe({ sex: newSex });
+    queryClient.invalidateQueries(['me']);
+  };
+
+  const handleCountryChange = async (newCountry) => {
+    await base44.auth.updateMe({ country: newCountry });
+    queryClient.invalidateQueries(['me']);
+  };
+
+  const handleLogout = () => {
+    base44.auth.logout();
+  };
+
+  if (!user) return null;
+
+  const completedDreams = dreams.filter(d => d.status === 'completed').length;
+  const activeDreams = dreams.filter(d => d.status === 'in_progress').length;
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
+      <div className="max-w-4xl mx-auto p-4 md:p-8 space-y-8">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center"
+        >
+          <h1 className="text-3xl md:text-4xl font-bold text-slate-800 mb-2">Profil</h1>
+          <p className="text-slate-600">Votre parcours en un coup d'œil</p>
+        </motion.div>
+
+        {/* Profile Card */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm"
+        >
+          <div className="flex flex-col items-center gap-6">
+            <ProfilePhoto 
+              photoUrl={user.profile_photo_url} 
+              onPhotoUpdate={handlePhotoUpdate}
+            />
+            
+            <div className="text-center">
+              <h2 className="text-2xl font-bold text-slate-800 mb-1">{user.full_name}</h2>
+              <p className="text-slate-600">{user.email}</p>
+            </div>
+
+            <div className="flex gap-6 flex-wrap justify-center">
+              <div className="flex items-center gap-2 bg-gradient-to-r from-amber-100 to-yellow-100 px-4 py-2 rounded-full border border-amber-300">
+                <Star className="w-5 h-5 text-amber-600 fill-amber-600" />
+                <span className="text-xl font-bold text-amber-700">{user.total_stars || 0}</span>
+                <span className="text-slate-700 text-sm">étoiles</span>
+              </div>
+
+              {user.streak_days > 0 && (
+                <div className="flex items-center gap-2 bg-gradient-to-r from-orange-100 to-red-100 px-4 py-2 rounded-full border border-orange-300">
+                  <Flame className="w-5 h-5 text-orange-600" />
+                  <span className="text-xl font-bold text-orange-700">{user.streak_days}</span>
+                  <span className="text-slate-700 text-sm">jours de suite</span>
+                </div>
+              )}
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Stats Grid */}
+        <div className="grid md:grid-cols-3 gap-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm text-center"
+          >
+            <Target className="w-8 h-8 text-blue-500 mb-3 mx-auto" />
+            <div className="text-3xl font-bold text-slate-800 mb-1">{activeDreams}</div>
+            <div className="text-sm text-slate-600">Rêves actifs</div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm text-center"
+          >
+            <Target className="w-8 h-8 text-green-500 mb-3 mx-auto" />
+            <div className="text-3xl font-bold text-slate-800 mb-1">{completedDreams}</div>
+            <div className="text-sm text-slate-600">Rêves accomplis</div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm text-center"
+          >
+            <BookHeart className="w-8 h-8 text-purple-500 mb-3 mx-auto" />
+            <div className="text-3xl font-bold text-slate-800 mb-1">{reflections.length}</div>
+            <div className="text-sm text-slate-600">Réflexions</div>
+          </motion.div>
+        </div>
+
+        {/* Referral Section */}
+        <ReferralSection 
+          referralCode={user.referral_code} 
+          referralCount={referralCount}
+          referralStars={referralStars}
+        />
+
+        {/* Settings */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+          className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm"
+        >
+          <h3 className="text-lg font-semibold text-slate-800 mb-4">Paramètres</h3>
+          
+          <div className="space-y-4">
+            {/* Birthday */}
+            <div className="space-y-2">
+              <Label className="text-slate-700">Date de naissance</Label>
+              <Input
+                type="date"
+                value={user.date_of_birth || ''}
+                onChange={(e) => handleBirthdayChange(e.target.value)}
+                className="bg-slate-50"
+                max={new Date().toISOString().split('T')[0]}
+              />
+              <p className="text-xs text-slate-500">Vous pouvez modifier votre date de naissance si nécessaire</p>
+            </div>
+
+            {/* Sex */}
+            <div className="space-y-2">
+              <Label className="text-slate-700">Sexe</Label>
+              <Select
+                value={user.sex || 'male'}
+                onValueChange={handleSexChange}
+              >
+                <SelectTrigger className="bg-slate-50">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="male">Homme</SelectItem>
+                  <SelectItem value="female">Femme</SelectItem>
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-slate-500">Utilisé pour calculer l'espérance de vie réelle</p>
+            </div>
+
+            {/* Country */}
+            <div className="space-y-2">
+              <Label className="text-slate-700">Pays de naissance</Label>
+              <Select
+                value={user.country || 'OTHER'}
+                onValueChange={handleCountryChange}
+              >
+                <SelectTrigger className="bg-slate-50">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="max-h-[200px]">
+                  {countries.map((c) => (
+                    <SelectItem key={c.code} value={c.code}>
+                      {c.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-slate-500">Utilisé pour calculer l'espérance de vie selon les statistiques de votre pays</p>
+            </div>
+
+            {/* Life Calculation Mode */}
+            <div className="space-y-2">
+              <Label className="text-slate-700">Méthode de calcul de vie</Label>
+              <Select
+                value={user.life_calculation_mode || '30000_days'}
+                onValueChange={handleLifeCalculationChange}
+              >
+                <SelectTrigger className="bg-slate-50">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="30000_days">30 000 jours (par défaut)</SelectItem>
+                  <SelectItem value="by_demographics">
+                    Réel (selon mon profil){user.sex && user.country ? ` - ${user.sex === 'male' ? 'Homme' : 'Femme'}, ${countries.find(c => c.code === user.country)?.name || user.country}` : ''}
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+              
+              {user.life_calculation_mode === 'by_demographics' && (
+                <p className="text-xs text-slate-500 mt-2">
+                  Basé sur les données d'espérance de vie de l'OMS pour les {user.sex === 'male' ? 'hommes' : 'femmes'} en {countries.find(c => c.code === user.country)?.name || 'votre pays'}
+                </p>
+              )}
+            </div>
+
+            {/* Theme Preference */}
+            <div className="space-y-2">
+              <Label className="text-slate-700">Thème</Label>
+              <Select
+                value={user.theme_preference || 'light'}
+                onValueChange={handleThemeChange}
+              >
+                <SelectTrigger className="bg-slate-50">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="light">Clair (Recommandé)</SelectItem>
+                  <SelectItem value="dark">Sombre</SelectItem>
+                  <SelectItem value="lunar">Lunaire</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="pt-4">
+              <Button
+                onClick={handleLogout}
+                variant="outline"
+                className="w-full border-red-300 text-red-600 hover:bg-red-50 hover:text-red-700"
+              >
+                <LogOut className="w-4 h-4 mr-2" />
+                Se déconnecter
+              </Button>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    </div>
+  );
+}
