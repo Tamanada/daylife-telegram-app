@@ -2,109 +2,906 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <title>DAYLIFE – Every day counts</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>DAYLIFE</title>
-  <link rel="stylesheet" href="style.css" />
+  <style>
+    :root {
+      --bg-gradient: linear-gradient(135deg, #eff6ff, #f5e9ff, #ffe4f3);
+      --card-bg: #ffffff;
+      --card-border: #e2e8f0;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --primary: #2563eb;
+      --primary-2: #7c3aed;
+      --primary-hover-1: #1d4ed8;
+      --primary-hover-2: #6d28d9;
+      --error: #dc2626;
+      --success: #16a34a;
+      --shadow-soft: 0 24px 60px rgba(15, 23, 42, 0.1);
+      --radius-card: 24px;
+      --radius-pill: 999px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+      background: var(--bg-gradient);
+      color: var(--text-main);
+    }
+
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .page {
+      width: 100%;
+      max-width: 960px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .language-switcher {
+      position: absolute;
+      top: 0;
+      right: 0;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .language-switcher label {
+      font-weight: 500;
+    }
+
+    .language-switcher select {
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid #cbd5f5;
+      background: rgba(255, 255, 255, 0.9);
+      font-size: 12px;
+      outline: none;
+    }
+
+    main {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 480px;
+      background: var(--card-bg);
+      border-radius: var(--radius-card);
+      border: 1px solid var(--card-border);
+      box-shadow: var(--shadow-soft);
+      padding: 32px 24px 28px;
+      margin-top: 32px;
+    }
+
+    @media (min-width: 640px) {
+      .card {
+        padding: 40px 32px 32px;
+        margin-top: 40px;
+      }
+    }
+
+    .logo-circle {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      margin: 0 auto 16px;
+      background: radial-gradient(circle at 30% 20%, #f9fafb, #1d4ed8, #7c3aed);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      font-size: 28px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 26px;
+      margin: 0 0 8px;
+      font-weight: 700;
+    }
+
+    .tagline {
+      text-align: center;
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 14px;
+    }
+
+    .field label {
+      font-weight: 500;
+      color: #334155;
+    }
+
+    input[type="date"],
+    select {
+      padding: 9px 10px;
+      border-radius: 10px;
+      border: 1px solid #cbd5e1;
+      font-size: 14px;
+      outline: none;
+      background: #f8fafc;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease,
+        background-color 0.15s ease;
+    }
+
+    input[type="date"]:focus,
+    select:focus {
+      border-color: #6366f1;
+      box-shadow: 0 0 0 1px rgba(99, 102, 241, 0.3);
+      background-color: #ffffff;
+    }
+
+    .hint {
+      margin: 4px 0 0;
+      font-size: 11px;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    .button-primary {
+      margin-top: 8px;
+      width: 100%;
+      border: none;
+      border-radius: 999px;
+      padding: 12px 16px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      background: linear-gradient(90deg, var(--primary), var(--primary-2));
+      color: #ffffff;
+      transition: filter 0.15s ease, transform 0.1s ease;
+    }
+
+    .button-primary:hover {
+      filter: brightness(1.05);
+      transform: translateY(-1px);
+    }
+
+    .button-primary:active {
+      transform: translateY(0);
+    }
+
+    .button-primary:disabled {
+      cursor: not-allowed;
+      opacity: 0.55;
+      transform: none;
+    }
+
+    .result {
+      margin-top: 12px;
+      font-size: 13px;
+      text-align: center;
+    }
+
+    .result.error {
+      color: var(--error);
+    }
+
+    .result.success {
+      color: var(--success);
+    }
+
+    /* RTL support (mainly for Arabic) */
+    body.rtl {
+      direction: rtl;
+    }
+
+    body.rtl .language-switcher {
+      right: auto;
+      left: 0;
+      flex-direction: row-reverse;
+    }
+
+    body.rtl .field label {
+      text-align: right;
+    }
+
+    body.rtl .tagline,
+    body.rtl h1,
+    body.rtl .result {
+      text-align: center;
+    }
+  </style>
 </head>
 <body>
-  <div class="container">
-    <h1>🌞 DAYLIFE</h1>
-    <p>Each day counts. What will you do with yours?</p>
-
-    <!-- Country & Gender Inputs -->
-    <div class="counter">
-      <select id="country">
-        <option value="">🌍 Select your country</option>
-      </select>
-
-      <select id="sex">
-        <option value="">🧍 Select your sex</option>
-        <option value="male">Male</option>
-        <option value="female">Female</option>
-      </select>
-
-      <label for="birthDate">Enter your birth date:</label>
-      <input type="date" id="birthDate" />
-
-      <button id="calculate">Show My Days</button>
+  <div class="page">
+    <div class="language-switcher">
+      <label for="languageSelect" id="languageLabel">Language</label>
+      <select id="languageSelect"></select>
     </div>
 
-    <!-- Result -->
-    <div id="result" class="hidden">
-      <h2>You have lived <span id="daysLived"></span> days!</h2>
-      <p id="countryData"></p>
-      <p id="remaining"></p>
-    </div>
+    <main>
+      <div class="card">
+        <div class="logo-circle">
+          ✦
+        </div>
+        <h1 id="headline">DAYLIFE</h1>
+        <p class="tagline" id="tagline">
+          Every day counts. What will you do with yours?
+        </p>
+
+        <form id="setupForm">
+          <div class="field">
+            <label for="dob" id="dobLabel">Date of birth *</label>
+            <input type="date" id="dob" />
+          </div>
+
+          <div class="field">
+            <label for="sex" id="sexLabel">Sex *</label>
+            <select id="sex">
+              <option value="" id="sexPlaceholder">Select your sex</option>
+              <option value="male" id="sexMale">Male</option>
+              <option value="female" id="sexFemale">Female</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="country" id="countryLabel">Country of birth *</label>
+            <select id="country">
+              <option value="" id="countryPlaceholder">Select your country</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="calculationMode" id="calcLabel">Life calculation method</label>
+            <select id="calculationMode">
+              <option value="30000_days" id="modeFixed">30,000 days (default)</option>
+              <option value="by_demographics" id="modeDemographic">
+                Real (based on my profile)
+              </option>
+            </select>
+            <p class="hint" id="modeHint">
+              We will use the average life expectancy for your sex and country of birth.
+            </p>
+          </div>
+
+          <button type="submit" class="button-primary" id="startButton">
+            Start my journey
+          </button>
+        </form>
+
+        <p id="resultMessage" class="result"></p>
+      </div>
+    </main>
   </div>
 
   <script>
-    // === Load Country List from REST Countries API ===
-    async function loadCountries() {
-      try {
-        const res = await fetch("https://restcountries.com/v3.1/all");
-        const data = await res.json();
-        const sorted = data.sort((a, b) => a.name.common.localeCompare(b.name.common));
-        const select = document.getElementById("country");
-        sorted.forEach(c => {
-          const opt = document.createElement("option");
-          opt.value = c.cca2.toLowerCase();
-          opt.textContent = c.name.common;
-          select.appendChild(opt);
-        });
-      } catch (err) {
-        console.error("Error loading countries:", err);
+    // --- Countries (same list for all languages for now) ---
+    const countries = [
+      { code: 'AF', name: 'Afghanistan' },
+      { code: 'ZA', name: 'Afrique du Sud' },
+      { code: 'AL', name: 'Albanie' },
+      { code: 'DZ', name: 'Algérie' },
+      { code: 'DE', name: 'Allemagne' },
+      { code: 'AD', name: 'Andorre' },
+      { code: 'AO', name: 'Angola' },
+      { code: 'SA', name: 'Arabie Saoudite' },
+      { code: 'AR', name: 'Argentine' },
+      { code: 'AM', name: 'Arménie' },
+      { code: 'AU', name: 'Australie' },
+      { code: 'AT', name: 'Autriche' },
+      { code: 'AZ', name: 'Azerbaïdjan' },
+      { code: 'BS', name: 'Bahamas' },
+      { code: 'BH', name: 'Bahreïn' },
+      { code: 'BD', name: 'Bangladesh' },
+      { code: 'BB', name: 'Barbade' },
+      { code: 'BE', name: 'Belgique' },
+      { code: 'BZ', name: 'Belize' },
+      { code: 'BJ', name: 'Bénin' },
+      { code: 'BT', name: 'Bhoutan' },
+      { code: 'BY', name: 'Biélorussie' },
+      { code: 'BO', name: 'Bolivie' },
+      { code: 'BA', name: 'Bosnie-Herzégovine' },
+      { code: 'BW', name: 'Botswana' },
+      { code: 'BR', name: 'Brésil' },
+      { code: 'BN', name: 'Brunei' },
+      { code: 'BG', name: 'Bulgarie' },
+      { code: 'BF', name: 'Burkina Faso' },
+      { code: 'BI', name: 'Burundi' },
+      { code: 'KH', name: 'Cambodge' },
+      { code: 'CM', name: 'Cameroun' },
+      { code: 'CA', name: 'Canada' },
+      { code: 'CV', name: 'Cap-Vert' },
+      { code: 'CL', name: 'Chili' },
+      { code: 'CN', name: 'Chine' },
+      { code: 'CY', name: 'Chypre' },
+      { code: 'CO', name: 'Colombie' },
+      { code: 'KM', name: 'Comores' },
+      { code: 'CG', name: 'Congo' },
+      { code: 'KR', name: 'Corée du Sud' },
+      { code: 'KP', name: 'Corée du Nord' },
+      { code: 'CR', name: 'Costa Rica' },
+      { code: 'CI', name: "Côte d'Ivoire" },
+      { code: 'HR', name: 'Croatie' },
+      { code: 'CU', name: 'Cuba' },
+      { code: 'DK', name: 'Danemark' },
+      { code: 'DJ', name: 'Djibouti' },
+      { code: 'DM', name: 'Dominique' },
+      { code: 'EG', name: 'Égypte' },
+      { code: 'AE', name: 'Émirats Arabes Unis' },
+      { code: 'EC', name: 'Équateur' },
+      { code: 'ER', name: 'Érythrée' },
+      { code: 'ES', name: 'Espagne' },
+      { code: 'EE', name: 'Estonie' },
+      { code: 'US', name: 'États-Unis' },
+      { code: 'ET', name: 'Éthiopie' },
+      { code: 'FJ', name: 'Fidji' },
+      { code: 'FI', name: 'Finlande' },
+      { code: 'FR', name: 'France' },
+      { code: 'GA', name: 'Gabon' },
+      { code: 'GM', name: 'Gambie' },
+      { code: 'GE', name: 'Géorgie' },
+      { code: 'GH', name: 'Ghana' },
+      { code: 'GR', name: 'Grèce' },
+      { code: 'GD', name: 'Grenade' },
+      { code: 'GT', name: 'Guatemala' },
+      { code: 'GN', name: 'Guinée' },
+      { code: 'GQ', name: 'Guinée équatoriale' },
+      { code: 'GW', name: 'Guinée-Bissau' },
+      { code: 'GY', name: 'Guyana' },
+      { code: 'HT', name: 'Haïti' },
+      { code: 'HN', name: 'Honduras' },
+      { code: 'HU', name: 'Hongrie' },
+      { code: 'IN', name: 'Inde' },
+      { code: 'ID', name: 'Indonésie' },
+      { code: 'IQ', name: 'Irak' },
+      { code: 'IR', name: 'Iran' },
+      { code: 'IE', name: 'Irlande' },
+      { code: 'IS', name: 'Islande' },
+      { code: 'IL', name: 'Israël' },
+      { code: 'IT', name: 'Italie' },
+      { code: 'JM', name: 'Jamaïque' },
+      { code: 'JP', name: 'Japon' },
+      { code: 'JO', name: 'Jordanie' },
+      { code: 'KZ', name: 'Kazakhstan' },
+      { code: 'KE', name: 'Kenya' },
+      { code: 'KG', name: 'Kirghizistan' },
+      { code: 'KI', name: 'Kiribati' },
+      { code: 'KW', name: 'Koweït' },
+      { code: 'LA', name: 'Laos' },
+      { code: 'LS', name: 'Lesotho' },
+      { code: 'LV', name: 'Lettonie' },
+      { code: 'LB', name: 'Liban' },
+      { code: 'LR', name: 'Liberia' },
+      { code: 'LY', name: 'Libye' },
+      { code: 'LI', name: 'Liechtenstein' },
+      { code: 'LT', name: 'Lituanie' },
+      { code: 'LU', name: 'Luxembourg' },
+      { code: 'MK', name: 'Macédoine du Nord' },
+      { code: 'MG', name: 'Madagascar' },
+      { code: 'MY', name: 'Malaisie' },
+      { code: 'MW', name: 'Malawi' },
+      { code: 'MV', name: 'Maldives' },
+      { code: 'ML', name: 'Mali' },
+      { code: 'MT', name: 'Malte' },
+      { code: 'MA', name: 'Maroc' },
+      { code: 'MH', name: 'Îles Marshall' },
+      { code: 'MU', name: 'Maurice' },
+      { code: 'MR', name: 'Mauritanie' },
+      { code: 'MX', name: 'Mexique' },
+      { code: 'FM', name: 'Micronésie' },
+      { code: 'MD', name: 'Moldavie' },
+      { code: 'MC', name: 'Monaco' },
+      { code: 'MN', name: 'Mongolie' },
+      { code: 'ME', name: 'Monténégro' },
+      { code: 'MZ', name: 'Mozambique' },
+      { code: 'MM', name: 'Myanmar' },
+      { code: 'NA', name: 'Namibie' },
+      { code: 'NR', name: 'Nauru' },
+      { code: 'NP', name: 'Népal' },
+      { code: 'NI', name: 'Nicaragua' },
+      { code: 'NE', name: 'Niger' },
+      { code: 'NG', name: 'Nigeria' },
+      { code: 'NO', name: 'Norvège' },
+      { code: 'NZ', name: 'Nouvelle-Zélande' },
+      { code: 'OM', name: 'Oman' },
+      { code: 'UG', name: 'Ouganda' },
+      { code: 'UZ', name: 'Ouzbékistan' },
+      { code: 'PK', name: 'Pakistan' },
+      { code: 'PW', name: 'Palaos' },
+      { code: 'PA', name: 'Panama' },
+      { code: 'PG', name: 'Papouasie-Nouvelle-Guinée' },
+      { code: 'PY', name: 'Paraguay' },
+      { code: 'NL', name: 'Pays-Bas' },
+      { code: 'PE', name: 'Pérou' },
+      { code: 'PH', name: 'Philippines' },
+      { code: 'PL', name: 'Pologne' },
+      { code: 'PT', name: 'Portugal' },
+      { code: 'QA', name: 'Qatar' },
+      { code: 'DO', name: 'République Dominicaine' },
+      { code: 'CD', name: 'République Démocratique du Congo' },
+      { code: 'CZ', name: 'République Tchèque' },
+      { code: 'RO', name: 'Roumanie' },
+      { code: 'GB', name: 'Royaume-Uni' },
+      { code: 'RU', name: 'Russie' },
+      { code: 'RW', name: 'Rwanda' },
+      { code: 'KN', name: 'Saint-Christophe-et-Niévès' },
+      { code: 'SM', name: 'Saint-Marin' },
+      { code: 'VC', name: 'Saint-Vincent-et-les-Grenadines' },
+      { code: 'LC', name: 'Sainte-Lucie' },
+      { code: 'SV', name: 'Salvador' },
+      { code: 'WS', name: 'Samoa' },
+      { code: 'ST', name: 'Sao Tomé-et-Principe' },
+      { code: 'SN', name: 'Sénégal' },
+      { code: 'RS', name: 'Serbie' },
+      { code: 'SC', name: 'Seychelles' },
+      { code: 'SL', name: 'Sierra Leone' },
+      { code: 'SG', name: 'Singapour' },
+      { code: 'SK', name: 'Slovaquie' },
+      { code: 'SI', name: 'Slovénie' },
+      { code: 'SO', name: 'Somalie' },
+      { code: 'SD', name: 'Soudan' },
+      { code: 'SS', name: 'Soudan du Sud' },
+      { code: 'LK', name: 'Sri Lanka' },
+      { code: 'SE', name: 'Suède' },
+      { code: 'CH', name: 'Suisse' },
+      { code: 'SR', name: 'Suriname' },
+      { code: 'SY', name: 'Syrie' },
+      { code: 'TJ', name: 'Tadjikistan' },
+      { code: 'TZ', name: 'Tanzanie' },
+      { code: 'TD', name: 'Tchad' },
+      { code: 'TH', name: 'Thaïlande' },
+      { code: 'TL', name: 'Timor oriental' },
+      { code: 'TG', name: 'Togo' },
+      { code: 'TO', name: 'Tonga' },
+      { code: 'TT', name: 'Trinité-et-Tobago' },
+      { code: 'TN', name: 'Tunisie' },
+      { code: 'TM', name: 'Turkménistan' },
+      { code: 'TR', name: 'Turquie' },
+      { code: 'TV', name: 'Tuvalu' },
+      { code: 'UA', name: 'Ukraine' },
+      { code: 'UY', name: 'Uruguay' },
+      { code: 'VU', name: 'Vanuatu' },
+      { code: 'VA', name: 'Vatican' },
+      { code: 'VE', name: 'Venezuela' },
+      { code: 'VN', name: 'Vietnam' },
+      { code: 'YE', name: 'Yémen' },
+      { code: 'ZM', name: 'Zambie' },
+      { code: 'ZW', name: 'Zimbabwe' },
+    ];
+
+    // --- Translations for 12 languages ---
+    const translations = {
+      en: {
+        appName: "DAYLIFE",
+        headline: "Welcome to DAYLIFE",
+        tagline: "Every day counts. What will you do with yours?",
+        dobLabel: "Date of birth *",
+        sexLabel: "Sex *",
+        sexPlaceholder: "Select your sex",
+        sexMale: "Male",
+        sexFemale: "Female",
+        countryLabel: "Country of birth *",
+        countryPlaceholder: "Select your country",
+        calcLabel: "Life calculation method",
+        modeFixed: "30,000 days (default)",
+        modeDemographic: "Real (based on my profile)",
+        modeHint:
+          "We will use the average life expectancy for your sex and country of birth.",
+        startButton: "Start my journey",
+        languageLabel: "Language",
+        errorIncomplete: "Please fill in all required fields.",
+        successMessage:
+          "Thank you! Your DAYLIFE profile is now set up on this device.",
+      },
+      fr: {
+        appName: "DAYLIFE",
+        headline: "Bienvenue sur DAYLIFE",
+        tagline: "Chaque jour compte. Que ferez-vous du vôtre ?",
+        dobLabel: "Date de naissance *",
+        sexLabel: "Sexe *",
+        sexPlaceholder: "Sélectionnez votre sexe",
+        sexMale: "Homme",
+        sexFemale: "Femme",
+        countryLabel: "Pays de naissance *",
+        countryPlaceholder: "Sélectionnez votre pays",
+        calcLabel: "Méthode de calcul de vie",
+        modeFixed: "30 000 jours (par défaut)",
+        modeDemographic: "Réel (selon mon profil)",
+        modeHint:
+          "Nous calculerons selon l'espérance de vie moyenne pour votre sexe et pays de naissance.",
+        startButton: "Commencer mon voyage",
+        languageLabel: "Langue",
+        errorIncomplete: "Veuillez remplir tous les champs obligatoires.",
+        successMessage:
+          "Merci ! Votre profil DAYLIFE est maintenant configuré sur cet appareil.",
+      },
+      zh: {
+        appName: "DAYLIFE",
+        headline: "欢迎来到 DAYLIFE",
+        tagline: "人生中的每一天都很重要，你今天要做什么？",
+        dobLabel: "出生日期 *",
+        sexLabel: "性别 *",
+        sexPlaceholder: "选择性别",
+        sexMale: "男",
+        sexFemale: "女",
+        countryLabel: "出生国家 *",
+        countryPlaceholder: "选择国家",
+        calcLabel: "生命计算方式",
+        modeFixed: "30,000 天（默认）",
+        modeDemographic: "真实（根据我的个人资料）",
+        modeHint:
+          "我们将根据您的性别和出生国家的平均寿命来计算。",
+        startButton: "开始我的旅程",
+        languageLabel: "语言",
+        errorIncomplete: "请填写所有必填字段。",
+        successMessage:
+          "谢谢！您的 DAYLIFE 资料已在此设备上设置完成。",
+      },
+      es: {
+        appName: "DAYLIFE",
+        headline: "Bienvenido a DAYLIFE",
+        tagline: "Cada día cuenta. ¿Qué harás con el tuyo?",
+        dobLabel: "Fecha de nacimiento *",
+        sexLabel: "Sexo *",
+        sexPlaceholder: "Selecciona tu sexo",
+        sexMale: "Hombre",
+        sexFemale: "Mujer",
+        countryLabel: "País de nacimiento *",
+        countryPlaceholder: "Selecciona tu país",
+        calcLabel: "Método de cálculo de vida",
+        modeFixed: "30 000 días (por defecto)",
+        modeDemographic: "Real (según mi perfil)",
+        modeHint:
+          "Calcularemos según la esperanza de vida media de tu sexo y país de nacimiento.",
+        startButton: "Empezar mi viaje",
+        languageLabel: "Idioma",
+        errorIncomplete: "Por favor, completa todos los campos obligatorios.",
+        successMessage:
+          "¡Gracias! Tu perfil DAYLIFE está configurado en este dispositivo.",
+      },
+      hi: {
+        appName: "DAYLIFE",
+        headline: "DAYLIFE में आपका स्वागत है",
+        tagline: "हर दिन मायने रखता है। आप अपने दिन के साथ क्या करेंगे?",
+        dobLabel: "जन्म तिथि *",
+        sexLabel: "लिंग *",
+        sexPlaceholder: "अपना लिंग चुनें",
+        sexMale: "पुरुष",
+        sexFemale: "महिला",
+        countryLabel: "जन्म का देश *",
+        countryPlaceholder: "अपना देश चुनें",
+        calcLabel: "जीवन गणना विधि",
+        modeFixed: "30,000 दिन (डिफ़ॉल्ट)",
+        modeDemographic: "वास्तविक (मेरी प्रोफ़ाइल के आधार पर)",
+        modeHint:
+          "हम आपके लिंग और जन्म देश की औसत जीवन प्रत्याशा के अनुसार गणना करेंगे।",
+        startButton: "मेरी यात्रा शुरू करें",
+        languageLabel: "भाषा",
+        errorIncomplete: "कृपया सभी आवश्यक फ़ील्ड भरें।",
+        successMessage:
+          "धन्यवाद! आपका DAYLIFE प्रोफ़ाइल इस डिवाइस पर सेट हो गया है।",
+      },
+      ar: {
+        appName: "DAYLIFE",
+        headline: "مرحبًا بك في DAYLIFE",
+        tagline: "كل يوم له قيمة. ماذا ستفعل بيومك؟",
+        dobLabel: "تاريخ الميلاد *",
+        sexLabel: "الجنس *",
+        sexPlaceholder: "اختر جنسك",
+        sexMale: "ذكر",
+        sexFemale: "أنثى",
+        countryLabel: "بلد الميلاد *",
+        countryPlaceholder: "اختر بلدك",
+        calcLabel: "طريقة حساب الحياة",
+        modeFixed: "30,000 يوم (افتراضي)",
+        modeDemographic: "حقيقي (حسب ملفي الشخصي)",
+        modeHint:
+          "سنستخدم متوسط ​​متوسط ​​العمر المتوقع لجنسك وبلد ميلادك.",
+        startButton: "ابدأ رحلتي",
+        languageLabel: "اللغة",
+        errorIncomplete: "يرجى ملء جميع الحقول المطلوبة.",
+        successMessage:
+          "شكرًا لك! تم إعداد ملف DAYLIFE الخاص بك على هذا الجهاز.",
+      },
+      bn: {
+        appName: "DAYLIFE",
+        headline: "DAYLIFE-এ স্বাগতম",
+        tagline: "প্রতিটি দিন গুরুত্বপূর্ণ। আপনি আপনার দিন দিয়ে কী করবেন?",
+        dobLabel: "জন্মতারিখ *",
+        sexLabel: "লিঙ্গ *",
+        sexPlaceholder: "আপনার লিঙ্গ নির্বাচন করুন",
+        sexMale: "পুরুষ",
+        sexFemale: "মহিলা",
+        countryLabel: "জন্ম দেশ *",
+        countryPlaceholder: "আপনার দেশ নির্বাচন করুন",
+        calcLabel: "জীবন গণনার পদ্ধতি",
+        modeFixed: "৩০,০০০ দিন (ডিফল্ট)",
+        modeDemographic: "বাস্তব (আমার প্রোফাইল অনুযায়ী)",
+        modeHint:
+          "আমরা আপনার লিঙ্গ ও জন্ম দেশের গড় আয়ু অনুযায়ী হিসাব করব।",
+        startButton: "আমার যাত্রা শুরু করুন",
+        languageLabel: "ভাষা",
+        errorIncomplete: "অনুগ্রহ করে সব প্রয়োজনীয় ঘর পূরণ করুন।",
+        successMessage:
+          "ধন্যবাদ! আপনার DAYLIFE প্রোফাইল এই ডিভাইসে সংরক্ষণ করা হয়েছে।",
+      },
+      pt: {
+        appName: "DAYLIFE",
+        headline: "Bem-vindo ao DAYLIFE",
+        tagline: "Cada dia conta. O que você vai fazer com o seu?",
+        dobLabel: "Data de nascimento *",
+        sexLabel: "Sexo *",
+        sexPlaceholder: "Selecione seu sexo",
+        sexMale: "Masculino",
+        sexFemale: "Feminino",
+        countryLabel: "País de nascimento *",
+        countryPlaceholder: "Selecione seu país",
+        calcLabel: "Método de cálculo de vida",
+        modeFixed: "30.000 dias (padrão)",
+        modeDemographic: "Real (com base no meu perfil)",
+        modeHint:
+          "Calcularemos de acordo com a expectativa de vida média para seu sexo e país de nascimento.",
+        startButton: "Começar minha jornada",
+        languageLabel: "Idioma",
+        errorIncomplete: "Por favor, preencha todos os campos obrigatórios.",
+        successMessage:
+          "Obrigado! Seu perfil DAYLIFE está configurado neste dispositivo.",
+      },
+      ru: {
+        appName: "DAYLIFE",
+        headline: "Добро пожаловать в DAYLIFE",
+        tagline: "Каждый день имеет значение. Что вы сделаете со своим?",
+        dobLabel: "Дата рождения *",
+        sexLabel: "Пол *",
+        sexPlaceholder: "Выберите ваш пол",
+        sexMale: "Мужской",
+        sexFemale: "Женский",
+        countryLabel: "Страна рождения *",
+        countryPlaceholder: "Выберите вашу страну",
+        calcLabel: "Метод расчёта жизни",
+        modeFixed: "30 000 дней (по умолчанию)",
+        modeDemographic: "Реальный (по моему профилю)",
+        modeHint:
+          "Мы будем использовать среднюю продолжительность жизни для вашего пола и страны рождения.",
+        startButton: "Начать мой путь",
+        languageLabel: "Язык",
+        errorIncomplete: "Пожалуйста, заполните все обязательные поля.",
+        successMessage:
+          "Спасибо! Ваш профиль DAYLIFE настроен на этом устройстве.",
+      },
+      id: {
+        appName: "DAYLIFE",
+        headline: "Selamat datang di DAYLIFE",
+        tagline: "Setiap hari itu penting. Apa yang akan kamu lakukan hari ini?",
+        dobLabel: "Tanggal lahir *",
+        sexLabel: "Jenis kelamin *",
+        sexPlaceholder: "Pilih jenis kelamin",
+        sexMale: "Laki-laki",
+        sexFemale: "Perempuan",
+        countryLabel: "Negara kelahiran *",
+        countryPlaceholder: "Pilih negaramu",
+        calcLabel: "Metode perhitungan hidup",
+        modeFixed: "30.000 hari (default)",
+        modeDemographic: "Nyata (berdasarkan profil saya)",
+        modeHint:
+          "Kami akan menggunakan harapan hidup rata-rata berdasarkan jenis kelamin dan negara kelahiranmu.",
+        startButton: "Mulai perjalanan saya",
+        languageLabel: "Bahasa",
+        errorIncomplete: "Harap isi semua kolom yang wajib diisi.",
+        successMessage:
+          "Terima kasih! Profil DAYLIFE-mu sudah tersimpan di perangkat ini.",
+      },
+      th: {
+        appName: "DAYLIFE",
+        headline: "ยินดีต้อนรับสู่ DAYLIFE",
+        tagline: "ทุกวันมีความหมาย แล้ววันนี้คุณจะทำอะไร?",
+        dobLabel: "วันเดือนปีเกิด *",
+        sexLabel: "เพศ *",
+        sexPlaceholder: "เลือกเพศของคุณ",
+        sexMale: "ชาย",
+        sexFemale: "หญิง",
+        countryLabel: "ประเทศที่เกิด *",
+        countryPlaceholder: "เลือกประเทศของคุณ",
+        calcLabel: "วิธีคำนวณอายุขัย",
+        modeFixed: "30,000 วัน (ค่าเริ่มต้น)",
+        modeDemographic: "ตามความเป็นจริง (จากโปรไฟล์ของฉัน)",
+        modeHint:
+          "เราจะใช้อายุขัยเฉลี่ยตามเพศและประเทศที่คุณเกิดในการคำนวณ.",
+        startButton: "เริ่มต้นการเดินทางของฉัน",
+        languageLabel: "ภาษา",
+        errorIncomplete: "กรุณากรอกข้อมูลที่จำเป็นให้ครบถ้วน.",
+        successMessage:
+          "ขอบคุณ! โปรไฟล์ DAYLIFE ของคุณถูกตั้งค่าบนอุปกรณ์นี้แล้ว.",
+      },
+      my: {
+        appName: "DAYLIFE",
+        headline: "DAYLIFE သို့ကြိုဆိုပါတယ်",
+        tagline: "နေ့တိုင်းအရေးကြီးပါတယ်။ ဒီနေ့ကို ဘာလုပ်မလဲ?",
+        dobLabel: "မွေးသက္ကရာဇ် *",
+        sexLabel: "ကျား/မ *",
+        sexPlaceholder: "ကျား/မ ရွေးပါ",
+        sexMale: "ကျား",
+        sexFemale: "မ",
+        countryLabel: "မွေးရပ်နိုင်ငံ *",
+        countryPlaceholder: "နိုင်ငံကို ရွေးပါ",
+        calcLabel: "ဘဝ တွက်ချက်ပုံ",
+        modeFixed: "၃၀,၀၀၀ ရက် (ပုံမှန်)",
+        modeDemographic: "အမှန်တကယ် (ကိုယ်ရေးအချက်အလက်အပေါ်မူတည်၍)",
+        modeHint:
+          "သင်၏ ကျား/မ နှင့် မွေးရပ်နိုင်ငံ၏ ပျမ်းမျှအသက်ရှင်နိုင်ချေကို အသုံးပြုတွက်ချက်မည်။",
+        startButton: "စတင်ရန်",
+        languageLabel: "ဘာသာစကား",
+        errorIncomplete: "လိုအပ်သော ချက်လုံးကို ဖြည့်ပါ။",
+        successMessage:
+          "ကျေးဇူးတင်ပါတယ်။ သင်၏ DAYLIFE ကိုယ့်ပရိုဖိုင်ကို ဒီစက်ပေါ်တွင်သိမ်းဆည်းပြီ။",
+      },
+    };
+
+    const supportedLanguages = [
+      { code: "en", label: "English" },
+      { code: "zh", label: "中文" },
+      { code: "es", label: "Español" },
+      { code: "fr", label: "Français" },
+      { code: "hi", label: "हिन्दी" },
+      { code: "ar", label: "العربية" },
+      { code: "bn", label: "বাংলা" },
+      { code: "pt", label: "Português" },
+      { code: "ru", label: "Русский" },
+      { code: "id", label: "Bahasa Indonesia" },
+      { code: "th", label: "ไทย" },
+      { code: "my", label: "မြန်မာ" },
+    ];
+
+    function detectBrowserLanguage() {
+      const lang =
+        (navigator.languages && navigator.languages[0]) ||
+        navigator.language ||
+        "en";
+      const lower = lang.toLowerCase();
+
+      if (lower.startsWith("fr")) return "fr";
+      if (lower.startsWith("zh")) return "zh";
+      if (lower.startsWith("es")) return "es";
+      if (lower.startsWith("hi")) return "hi";
+      if (lower.startsWith("ar")) return "ar";
+      if (lower.startsWith("bn")) return "bn";
+      if (lower.startsWith("pt")) return "pt";
+      if (lower.startsWith("ru")) return "ru";
+      if (lower.startsWith("id")) return "id";
+      if (lower.startsWith("th")) return "th";
+      if (lower.startsWith("my")) return "my";
+      // default
+      return "en";
+    }
+
+    function updateDirection(lang) {
+      const rtlLanguages = ["ar"];
+      if (rtlLanguages.includes(lang)) {
+        document.body.classList.add("rtl");
+      } else {
+        document.body.classList.remove("rtl");
       }
     }
-    loadCountries();
 
-    // === Fetch life expectancy from World Bank ===
-    async function getLifeExpectancy(countryCode, sex) {
-      const indicator =
-        sex === "male"
-          ? "SP.DYN.LE00.MA.IN"
-          : "SP.DYN.LE00.FE.IN";
-      const url = `https://api.worldbank.org/v2/country/${countryCode}/indicator/${indicator}?format=json`;
-      try {
-        const res = await fetch(url);
-        const data = await res.json();
-        if (data && data[1]) {
-          const latest = data[1].find(entry => entry.value !== null);
-          return latest ? latest.value : 75;
+    function applyTranslations(lang) {
+      const t = translations[lang] || translations["en"];
+
+      document.getElementById("headline").textContent = t.headline;
+      document.getElementById("tagline").textContent = t.tagline;
+      document.getElementById("dobLabel").textContent = t.dobLabel;
+      document.getElementById("sexLabel").textContent = t.sexLabel;
+      document.getElementById("sexPlaceholder").textContent = t.sexPlaceholder;
+      document.getElementById("sexMale").textContent = t.sexMale;
+      document.getElementById("sexFemale").textContent = t.sexFemale;
+      document.getElementById("countryLabel").textContent = t.countryLabel;
+      document.getElementById("countryPlaceholder").textContent =
+        t.countryPlaceholder;
+      document.getElementById("calcLabel").textContent = t.calcLabel;
+      document.getElementById("modeFixed").textContent = t.modeFixed;
+      document.getElementById("modeDemographic").textContent =
+        t.modeDemographic;
+      document.getElementById("modeHint").textContent = t.modeHint;
+      document.getElementById("startButton").textContent = t.startButton;
+      document.getElementById("languageLabel").textContent = t.languageLabel;
+
+      // Clear result message on language change
+      const resultEl = document.getElementById("resultMessage");
+      resultEl.textContent = "";
+      resultEl.className = "result";
+
+      updateDirection(lang);
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const langSelect = document.getElementById("languageSelect");
+      const countrySelect = document.getElementById("country");
+      const dobInput = document.getElementById("dob");
+      const form = document.getElementById("setupForm");
+      const resultEl = document.getElementById("resultMessage");
+
+      // Populate language options
+      supportedLanguages.forEach((lang) => {
+        const opt = document.createElement("option");
+        opt.value = lang.code;
+        opt.textContent = lang.label;
+        langSelect.appendChild(opt);
+      });
+
+      // Populate country options
+      countries.forEach((c) => {
+        const opt = document.createElement("option");
+        opt.value = c.code;
+        opt.textContent = c.name;
+        countrySelect.appendChild(opt);
+      });
+
+      // Max date for DOB = today
+      const today = new Date().toISOString().split("T")[0];
+      dobInput.setAttribute("max", today);
+
+      // Detect browser language
+      const detectedLang = detectBrowserLanguage();
+      langSelect.value = supportedLanguages.some(
+        (l) => l.code === detectedLang
+      )
+        ? detectedLang
+        : "en";
+      applyTranslations(langSelect.value);
+
+      langSelect.addEventListener("change", () => {
+        const newLang = langSelect.value;
+        applyTranslations(newLang);
+      });
+
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const lang = langSelect.value;
+        const t = translations[lang] || translations["en"];
+
+        const dob = dobInput.value;
+        const sex = document.getElementById("sex").value;
+        const country = countrySelect.value;
+        const mode = document.getElementById("calculationMode").value;
+
+        if (!dob || !sex || !country) {
+          resultEl.textContent = t.errorIncomplete;
+          resultEl.className = "result error";
+          return;
         }
-      } catch (err) {
-        console.error("Error fetching life expectancy:", err);
-      }
-      return 75; // fallback default
-    }
 
-    // === Calculate and Display Results ===
-    document.getElementById("calculate").addEventListener("click", async () => {
-      const birthInput = document.getElementById("birthDate").value;
-      const sex = document.getElementById("sex").value;
-      const countryCode = document.getElementById("country").value;
+        const profile = { dob, sex, country, mode, lang };
+        try {
+          localStorage.setItem("daylifeProfile", JSON.stringify(profile));
+        } catch (err) {
+          // ignore storage errors (private mode, etc.)
+        }
 
-      if (!birthInput || !sex || !countryCode) {
-        alert("Please select country, sex, and enter your birth date.");
-        return;
-      }
-
-      const birthDate = new Date(birthInput);
-      const today = new Date();
-      const diff = today - birthDate;
-      const daysLived = Math.floor(diff / (1000 * 60 * 60 * 24));
-      document.getElementById("daysLived").textContent = daysLived.toLocaleString();
-
-      const lifeExp = await getLifeExpectancy(countryCode, sex);
-      const expectedDays = Math.round(lifeExp * 365);
-      const remainingDays = expectedDays - daysLived;
-
-      const countryText = document.getElementById("country").selectedOptions[0].text;
-      document.getElementById("countryData").innerHTML =
-        `In <strong>${countryText}</strong>, the average ${sex} lives about <strong>${lifeExp.toFixed(1)}</strong> years.`;
-      document.getElementById("remaining").innerHTML =
-        `You may have around <strong>${remainingDays.toLocaleString()}</strong> days left. Make each one count 🌙`;
-
-      document.getElementById("result").classList.remove("hidden");
+        resultEl.textContent = t.successMessage;
+        resultEl.className = "result success";
+      });
     });
   </script>
 </body>
