@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DAYLIFE</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>🌞 DAYLIFE</h1>
+    <p>Each day counts. What will you do with yours?</p>
+
+    <div class="counter">
+      <label for="birthDate">Enter your birth date:</label>
+      <input type="date" id="birthDate" />
+      <button id="calculate">Show My Days</button>
+    </div>
+
+    <div id="result" class="hidden">
+      <h2>You have lived <span id="daysLived"></span> days!</h2>
+      <p>Keep going — every sunrise is a new chance 🌅</p>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
