@@ -17,9 +17,12 @@
       --radius-card: 24px;
     }
 
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
-    html, body {
+    html,
+    body {
       margin: 0;
       padding: 0;
       height: 100%;
@@ -157,13 +160,34 @@
       transition: filter 0.15s ease, transform 0.1s ease;
     }
 
-    .button-primary:hover { filter: brightness(1.05); transform: translateY(-1px); }
-    .button-primary:active { transform: translateY(0); }
-    .button-primary:disabled { cursor: not-allowed; opacity: 0.55; transform: none; }
+    .button-primary:hover {
+      filter: brightness(1.05);
+      transform: translateY(-1px);
+    }
 
-    .result { margin-top: 12px; font-size: 13px; text-align: center; }
-    .result.error { color: #dc2626; }
-    .result.success { color: #16a34a; }
+    .button-primary:active {
+      transform: translateY(0);
+    }
+
+    .button-primary:disabled {
+      cursor: not-allowed;
+      opacity: 0.55;
+      transform: none;
+    }
+
+    .result {
+      margin-top: 12px;
+      font-size: 13px;
+      text-align: center;
+    }
+
+    .result.error {
+      color: #dc2626;
+    }
+
+    .result.success {
+      color: #16a34a;
+    }
   </style>
 </head>
 <body>
@@ -236,6 +260,7 @@
         calcLabel: "Life calculation method",
         startButton: "Start my journey",
         errorIncomplete: "Please fill in all required fields.",
+        successSaved: "Profile saved. Welcome back!",
       },
       fr: {
         tagline: "Chaque jour compte. Que ferez-vous du vôtre ?",
@@ -245,6 +270,7 @@
         calcLabel: "Méthode de calcul de vie",
         startButton: "Commencer mon voyage",
         errorIncomplete: "Veuillez remplir tous les champs obligatoires.",
+        successSaved: "Profil enregistré. Heureux de vous revoir !",
       }
     };
 
@@ -282,6 +308,9 @@
     const form = document.getElementById("setupForm");
     const resultEl = document.getElementById("resultMessage");
 
+    const targetPage = "life.html";
+    const isOnTargetPage = window.location.pathname.split("/").pop() === targetPage;
+
     form.addEventListener("submit", (e) => {
       e.preventDefault();
       const lang = langSelect.value;
@@ -301,19 +330,23 @@
       const profile = { dob, sex, country, mode, lang };
       localStorage.setItem("daylifeProfile", JSON.stringify(profile));
 
-      // ✅ Redirect to life.html
-      window.location.href = "life.html";
+      if (!isOnTargetPage) {
+        window.location.href = targetPage;
+      } else {
+        resultEl.textContent = t.successSaved;
+        resultEl.className = "result success";
+      }
     });
 
     // ✅ If profile already exists, redirect automatically
     const existingProfile = localStorage.getItem("daylifeProfile");
-    if (existingProfile) {
-      window.location.href = "life.html";
+    if (existingProfile && !isOnTargetPage) {
+      window.location.href = targetPage;
     }
   </script>
   <script src="assets/nav.js"></script>
-<script>
-  createNavBar("life"); <!-- ou "dreams", "stars", etc selon la page -->
-</script>
+  <script>
+    createNavBar("life"); // ou "dreams", "stars", etc. selon la page
+  </script>
 </body>
 </html>
